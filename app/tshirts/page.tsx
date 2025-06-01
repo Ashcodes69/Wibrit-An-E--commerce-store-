@@ -10,7 +10,7 @@ function Tshirts() {
           <div className="flex flex-wrap -m-4">
             <Link
               href="/product/buy-ora"
-              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg"
+              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg mt-9 "
             >
               <div className="relative h-48 rounded overflow-hidden">
                 <Image
@@ -35,7 +35,7 @@ function Tshirts() {
 
             <Link
               href="/product/buy-ora"
-              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg"
+              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg mt-9"
             >
               <div className="relative h-48 rounded overflow-hidden">
                 <Image
@@ -60,7 +60,7 @@ function Tshirts() {
 
             <Link
               href="/product/buy-ora"
-              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg"
+              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg mt-9"
             >
               <div className="relative h-48 rounded overflow-hidden">
                 <Image
@@ -85,7 +85,31 @@ function Tshirts() {
 
             <Link
               href="/product/buy-ora"
-              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg"
+              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg mt-9"
+            >
+              <div className="relative h-48 rounded overflow-hidden">
+                <Image
+                  alt="t-shirt"
+                  src="/t-shirt-image.jpg"
+                  height={120}
+                  width={150}
+                  className="m-auto md:m-0"
+                />
+              </div>
+              <div className="mt-4 text-center md:text-left">
+                <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
+                  CATEGORY
+                </h3>
+                <h2 className="text-gray-900 title-font text-lg font-medium">
+                  Shooting
+                </h2>
+                <p className="mt-1">$21.15</p>{" "}
+                <p className="mt-1">S, M, L, XL, XXL</p>
+              </div>
+            </Link>
+             <Link
+              href="/product/buy-ora"
+              className="lg:w-1/4 md:w-1/2 p-4 w-full block shadow-lg mt-9"
             >
               <div className="relative h-48 rounded overflow-hidden">
                 <Image
