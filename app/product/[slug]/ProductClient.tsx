@@ -1,14 +1,32 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-// import { useState } from "react";
+import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
 export default function ProductClient({ slug }: { slug: string }) {
-  // const [pin, setPin] = useState()
-  const cheackPincode =()=>{
+  const [pin, setPin] = useState<string>("");
+  const [pinerror, setPinerror] = useState<string>("");
+  const [service, setService] = useState<boolean | null>(null);
+  const cheackPincode = async () => {
+    if (pin.trim() === "") {
+      setPinerror("please enter a valid pincode");
+      setService(null);
+      return;
+    }
+    setPinerror("");
+    const pins = await fetch("http://localhost:3000/api/pinCode");
+    const pinJson = await pins.json();
 
-  }
+    if (pinJson.pinCodes.includes(Number(pin))) {
+      setService(true);
+    } else {
+      setService(false);
+    }
+  };
+  const onchangePin = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPin(e.target.value);
+  };
   return (
     <div>
       <section className="text-gray-600 body-font overflow-hidden">
@@ -16,9 +34,9 @@ export default function ProductClient({ slug }: { slug: string }) {
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
             <Image
               alt="ecommerce"
-              className="lg:w-1/2 w-full lg:h-auto object-cover object-top rounded px-14"
-              width={160}
-              height={30}
+              className="lg:w-1/2 w-full lg:h-1/3 object-cover object-top rounded px-14"
+              width={800}
+              height={800}
               src="/t-shirt-image.jpg"
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
@@ -170,7 +188,10 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <span className="title-font font-medium text-2xl text-gray-900">
                   $58.00
                 </span>
-                <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-6 focus:outline-none hover:bg-purple-600 rounded">
+                <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
+                  Buy Now
+                </button>
+                <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
                   <IoMdAddCircleOutline className="mx-2 font-bold text-xl" />
                   To Cart
                 </button>
@@ -191,15 +212,37 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <p className="text-gray-800 font-medium mb-2">
                   Check delivery service availability in your area
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2">
                   <input
                     type="text"
+                    onChange={onchangePin}
                     placeholder="Enter your pin code"
                     className="flex-grow p-2 rounded border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
                   />
-                  <button onClick={cheackPincode} className="text-white bg-purple-600 hover:bg-purple-700 border-0 py-2 px-4 rounded">
+                  <button
+                    onClick={cheackPincode}
+                    className="text-white bg-purple-600 hover:bg-purple-700 border-0 py-2 px-4 rounded"
+                  >
                     Check
                   </button>
+                  <div className="displayPincodeResults min-h-[24px]">
+                    {pinerror && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        {pinerror}
+                      </p>
+                    )}
+                    {service !== null && (
+                      <p
+                        className={`mt-2 text-sm font-medium ${
+                          service ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {service
+                          ? "Delivery is available at your pincode ✅"
+                          : "Sorry, we do not deliver to this pincode ❌"}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

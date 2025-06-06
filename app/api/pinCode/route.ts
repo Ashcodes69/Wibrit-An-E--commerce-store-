@@ -1,9 +1,9 @@
+
+import { NextResponse } from 'next/server';
+
 export async function GET() {
-  const pinCodes =[834005,12345,9087,5678]
-  return new Response(JSON.stringify({pinCodes}), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const pinCodes = [110001, 560001, 834005, 400001];
+
+  return NextResponse.json({ pinCodes });
 }
+

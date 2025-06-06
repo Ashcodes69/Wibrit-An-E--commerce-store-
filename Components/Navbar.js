@@ -7,7 +7,7 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { IoBagCheck } from "react-icons/io5";
-import { FaTrash } from "react-icons/fa";
+import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 
 function Navbar() {
   const toggleCart = () => {
@@ -38,7 +38,7 @@ function Navbar() {
           </div>
 
           <nav className="mb-3 md:mb-0">
-            <ul className="flex flex-col md:flex-row items-center gap-4 font-semibold text-black">
+            <ul className="flex flex-row md:flex-row items-center gap-4 font-semibold text-black">
               <li>
                 <Link
                   href="/tshirts"
@@ -105,7 +105,7 @@ function Navbar() {
           </button>
 
           <button className="flex items-center gap-2 text-white bg-[#B91C1C] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#991B1B] rounded-lg shadow-sm transition duration-300">
-            <FaTrash />
+            <MdOutlineRemoveShoppingCart />
             ClearCart
           </button>
         </div>
