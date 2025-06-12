@@ -3,11 +3,10 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { MdOutlineShoppingCart } from "react-icons/md";
+import { MdOutlineShoppingCart , MdOutlineRemoveShoppingCart } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { IoBagCheck } from "react-icons/io5";
-import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 
 function Navbar() {
   const toggleCart = () => {

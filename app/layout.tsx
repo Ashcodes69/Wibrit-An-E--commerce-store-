@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import CartProvider from "./context/CartContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Wibrit | Premium Lifestyle & Fashion Store",
-  description: "Discover premium quality t-shirts, hoodies, mugs and more at Wibrit. Style meets comfort with our curated collection. Shop now for exclusive designs and great deals."
+  description:
+    "Discover premium quality t-shirts, hoodies, mugs and more at Wibrit. Style meets comfort with our curated collection. Shop now for exclusive designs and great deals.",
 };
 
 export default function RootLayout({
@@ -28,9 +30,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar/>
-        {children}
-         <Footer/>
+        {/* <Navbar/>
+         <CartProvider>
+          {children}
+        </CartProvider>
+         <Footer/> */}
+        <CartProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
