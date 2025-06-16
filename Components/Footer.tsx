@@ -17,6 +17,7 @@ function Footer() {
                 alt="Descriptive alt text"
                 width={500}
                 height={30}
+                className="w-auto h-auto"
               />
             </Link>
             <p className="mt-2 text-sm text-gray-500 px-4">

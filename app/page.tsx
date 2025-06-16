@@ -7,6 +7,7 @@ export default function Home() {
           src="/homepage.jpg"
           alt="wibrit-main-image"
           fill
+          priority
           className="object-cover w-full h-full rounded-none"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-20" />

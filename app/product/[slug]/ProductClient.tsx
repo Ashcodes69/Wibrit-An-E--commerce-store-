@@ -3,8 +3,16 @@ import React from "react";
 import Image from "next/image";
 import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductClient({ slug }: { slug: string }) {
+  const { cart, subtotal, addToCart, removeFromCart, clearCart } = useCart();
+  console.log(cart, subtotal, addToCart, removeFromCart, clearCart);
+  // const price = 499;
+  // const name = "Cool T-Shirt";
+  // const size = "xl";
+  // const variant = "red";
+
   const [pin, setPin] = useState<string>("");
   const [pinerror, setPinerror] = useState<string>("");
   const [service, setService] = useState<boolean | null>(null);
@@ -38,6 +46,7 @@ export default function ProductClient({ slug }: { slug: string }) {
               width={800}
               height={800}
               src="/t-shirt-image.jpg"
+              priority
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
@@ -191,7 +200,12 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
                   Buy Now
                 </button>
-                <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
+                <button
+                  onClick={() =>
+                    addToCart(slug, 1, 499, "Cool T-Shirt", "xl", "red")
+                  }
+                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
+                >
                   <IoMdAddCircleOutline className="mx-2 font-bold text-xl" />
                   To Cart
                 </button>

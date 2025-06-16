@@ -1,5 +1,18 @@
+
 "use client";
 import React, { createContext, useState, useEffect } from "react";
+
+type CartItem = {
+  qty: number;
+  price: number;
+  name: string;
+  size: string;
+  variant: string;
+};
+
+type Cart = {
+  [key: string]: CartItem;
+};
 
 type CartContextType = {
   cart: Cart;
@@ -14,18 +27,6 @@ type CartContextType = {
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
-};
-
-type CartItem = {
-  qty: number;
-  price: number;
-  name: string;
-  size: string;
-  variant: string;
-};
-
-type Cart = {
-  [key: string]: CartItem;
 };
 
 export const CartContext = createContext<CartContextType>({
@@ -43,27 +44,35 @@ export default function CartProvider({
 }) {
   const [cart, setCart] = useState<Cart>({});
   const [subtotal, setSubtotal] = useState<number>(0);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    console.log("hi, I am a useEffect from CartContext");
-    try {
+    if (typeof window !== "undefined") {
       const cartData = localStorage.getItem("cart");
       if (cartData) {
-        setCart(JSON.parse(cartData));
+        try {
+          const parsedCart = JSON.parse(cartData);
+          setCart(parsedCart);
+          updateSubtotal(parsedCart);
+        } catch (error) {
+          console.error("Error parsing cart data:", error);
+        }
       }
-    } catch (error) {
-      console.error(error);
+      setIsHydrated(true);
     }
   }, []);
 
+  const updateSubtotal = (cartObj: Cart) => {
+    let subT = 0;
+    Object.values(cartObj).forEach((item) => {
+      subT += item.price * item.qty;
+    });
+    setSubtotal(subT);
+  };
+
   const saveCart = (newCart: Cart) => {
     localStorage.setItem("cart", JSON.stringify(newCart));
-    let subT = 0;
-    const keys = Object.keys(newCart);
-    for (let i = 0; i < keys.length; i++) {
-      subT += newCart[keys[i]].price * newCart[keys[i]].qty;
-    }
-    setSubtotal(subT);
+    updateSubtotal(newCart);
   };
 
   const addToCart = (
@@ -75,27 +84,20 @@ export default function CartProvider({
     variant: string
   ) => {
     const newCart = { ...cart };
-
     if (itemCode in newCart) {
       newCart[itemCode].qty += qty;
     } else {
       newCart[itemCode] = { qty: 1, price, name, size, variant };
     }
-
     setCart(newCart);
     saveCart(newCart);
   };
 
   const removeFromCart = (itemCode: string, qty: number) => {
     const newCart = { ...cart };
-
     if (itemCode in newCart) {
       newCart[itemCode].qty -= qty;
-
-      if (newCart[itemCode].qty <= 0) {
-        delete newCart[itemCode];
-      }
-
+      if (newCart[itemCode].qty <= 0) delete newCart[itemCode];
       setCart(newCart);
       saveCart(newCart);
     }
@@ -106,6 +108,8 @@ export default function CartProvider({
     saveCart({});
   };
 
+  if (!isHydrated) return null;
+
   return (
     <CartContext.Provider
       value={{ cart, subtotal, addToCart, removeFromCart, clearCart }}
@@ -114,3 +118,5 @@ export default function CartProvider({
     </CartContext.Provider>
   );
 }
+import { useContext } from "react";
+export const useCart = () => useContext(CartContext);
