@@ -31,7 +31,7 @@ function Navbar() {
   };
   return (
     <>
-      <header className="bg-white text-black shadow-md w-full px-4 py-3">
+      <header className="bg-white text-black shadow-md w-full px-4 py-3 sticky top-0 z-40">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center justify-center md:justify-start mb-3 md:mb-0">
             <Link href={"/"}>
@@ -77,7 +77,11 @@ function Navbar() {
           <div className="flex items-center justify-center">
             <button onClick={toggleCart} className="relative group">
               <MdOutlineShoppingCart className="text-3xl text-black group-hover:text-purple-700 transition duration-200" />
-              <span className="absolute -top-2 -right-2 text-white bg-red-600 text-xs rounded-full px-1.5 py-0.5 font-bold">
+              <span
+                className={`absolute -top-2 -right-2 text-white bg-red-600 text-xs rounded-full px-1.5 py-0.5 font-bold ${
+                  Object.keys(cart).length === 0 ? "invisible" : ""
+                }`}
+              >
                 {Object.keys(cart).length}
               </span>
             </button>
@@ -125,11 +129,13 @@ function Navbar() {
               );
             })}
         </ul>
+                <span className="font-bold">Total Amount: ₹{subtotal}</span>
+
         <div className="flex justify-center gap-3 mt-12">
-          <button className="flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300">
+        <Link href={"/checkout"}>  <button className="flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300">
             <IoBagCheck />
             Checkout
-          </button>
+          </button></Link>
 
           <button
             onClick={clearCart}
