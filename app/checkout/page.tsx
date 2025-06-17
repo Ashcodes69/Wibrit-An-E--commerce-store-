@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useCart } from "../context/CartContext";
+import Link from "next/link";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 
 function Checkout() {
@@ -120,9 +121,10 @@ function Checkout() {
           <span className="font-bold text-xl text-gray-900">
             Total Amount: ₹{subtotal}
           </span>
-          <button className="mt-5 sm:mt-0 bg-purple-700 text-white px-8 py-2 rounded-full hover:bg-purple-800 transition shadow-md">
+        <Link href={"/order"}>  <button className="mt-5 sm:mt-0 bg-purple-700 text-white px-8 py-2 rounded-full hover:bg-purple-800 transition shadow-md">
             Pay ₹{subtotal}
           </button>
+          </Link>
         </div>
       </div>
     </div>
