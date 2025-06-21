@@ -9,7 +9,7 @@ export interface IProduct extends Document {
   size: string;
   color: string;
   price: number;
-  avalableQuantity: number;
+  availableQuantity: number;
 }
 
 const ProductSchema: Schema = new Schema<IProduct>(
@@ -22,7 +22,7 @@ const ProductSchema: Schema = new Schema<IProduct>(
     size: { type: String },
     color: { type: String },
     price: { type: Number, required: true },
-    avalableQuantity: { type: Number, required: true },
+   availableQuantity: { type: Number, required: true },
   },
   { timestamps: true }
 );
