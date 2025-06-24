@@ -6,23 +6,23 @@ export interface IProduct extends Document {
   desc: string;
   img: string;
   category: string;
-  size: string;
-  color: string;
+  size: string[];
+  color: string[];
   price: number;
   availableQuantity: number;
 }
 
 const ProductSchema: Schema = new Schema<IProduct>(
   {
-    title: { type: String, required: true },
+    title: { type: String, required: true, unique: true },
     slug: { type: String, required: true, unique: true },
     desc: { type: String, required: true },
     img: { type: String, required: true },
     category: { type: String, required: true },
-    size: { type: String },
-    color: { type: String },
+    size: { type: [String] },
+    color: { type: [String] },
     price: { type: Number, required: true },
-   availableQuantity: { type: Number, required: true },
+    availableQuantity: { type: Number, required: true },
   },
   { timestamps: true }
 );
