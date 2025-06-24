@@ -7,17 +7,19 @@ export const POST = async (req: Request) => {
   const body = await req.json();
   try {
     for (let i = 0; i < body.length; i++) {
+      const { title, slug, desc, img, category, price, variants } = body[i];
+       const filteredVariants = variants.filter(
+        (variant: { quantity: number }) => variant.quantity > 0
+      );
       const p = new Product({
-        title: body[i].title,
-        slug: body[i].slug,
-        desc: body[i].desc,
-        img: body[i].img,
-        category: body[i].category,
-        size: body[i].size,
-        color: body[i].color,
-        price: body[i].price,
-        availableQuantity: body[i].availableQuantity,
-      });     
+        title,
+        slug,
+        desc,
+        img,
+        category,
+        price,
+        variants : filteredVariants, 
+      }); 
       await p.save();
     }
     return NextResponse.json(
