@@ -113,21 +113,19 @@ function Navbar() {
             Object.keys(cart).map((k) => {
               return (
                 <li key={k}>
-                  <div className="item flex">
-                    <div className="w-2/3 font-semibold">{cart[k].name}</div>
-                    <div className="font-semibold flex items-center justify-center w-1/3 text-xl">
+                  <div className="item flex items-center justify-between w-full py-2 whitespace-nowrap">
+                    <div className="w-1/2 truncate pr-2 font-semibold">
+                      {cart[k].name}
+                    </div>
+                    <div className="flex items-center justify-center w-1/2 text-xl gap-2">
                       <CiCircleMinus
-                        onClick={() => {
-                          removeFromCart(k, 1);
-                        }}
-                        className="cursor-pointer font-bold"
+                        onClick={() => removeFromCart(k, 1)}
+                        className="cursor-pointer"
                       />
-                      <span className="mx-5">{cart[k].qty}</span>
+                      <span>{cart[k].qty}</span>
                       <CiCirclePlus
-                        onClick={() =>
-                          addToCart(k, 1, 499, "Cool T-Shirt", "xl", "red")
-                        }
-                        className="cursor-pointer font-bold"
+                        onClick={() => addToCart(k, 1)}
+                        className="cursor-pointer"
                       />
                     </div>
                   </div>

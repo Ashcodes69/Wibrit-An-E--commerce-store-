@@ -1,4 +1,3 @@
-
 "use client";
 import React, { createContext, useState, useEffect } from "react";
 
@@ -18,12 +17,12 @@ type CartContextType = {
   cart: Cart;
   subtotal: number;
   addToCart: (
-    itemCode: string,
+    itemCodeOrKey: string,
     qty: number,
-    price: number,
-    name: string,
-    size: string,
-    variant: string
+    price?: number,
+    name?: string,
+    size?: string,
+    variant?: string
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
@@ -76,31 +75,42 @@ export default function CartProvider({
   };
 
   const addToCart = (
-    itemCode: string,
+    itemCodeOrKey: string,
     qty: number,
-    price: number,
-    name: string,
-    size: string,
-    variant: string
+    price?: number,
+    name?: string,
+    size?: string,
+    variant?: string
   ) => {
+    let key = itemCodeOrKey;
     const newCart = { ...cart };
-    if (itemCode in newCart) {
-      newCart[itemCode].qty += qty;
+
+    if (price !== undefined && name && size && variant) {
+      key = `${itemCodeOrKey}-${size}-${variant}`;
+      if (key in newCart) {
+        newCart[key].qty += qty;
+      } else {
+        newCart[key] = { qty, price, name, size, variant };
+      }
     } else {
-      newCart[itemCode] = { qty: 1, price, name, size, variant };
+      if (key in newCart) {
+        newCart[key].qty += qty;
+      }
     }
     setCart(newCart);
     saveCart(newCart);
   };
 
-  const removeFromCart = (itemCode: string, qty: number) => {
+  const removeFromCart = (key: string, qty: number) => {
     const newCart = { ...cart };
-    if (itemCode in newCart) {
-      newCart[itemCode].qty -= qty;
-      if (newCart[itemCode].qty <= 0) delete newCart[itemCode];
-      setCart(newCart);
-      saveCart(newCart);
+    if (key in newCart) {
+      newCart[key].qty -= qty;
+      if (newCart[key].qty <= 0) {
+        delete newCart[key];
+      }
     }
+    setCart(newCart);
+    saveCart(newCart);
   };
 
   const clearCart = () => {

@@ -7,7 +7,18 @@ export const GET = async (req: Request) => {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
+    const slug = searchParams.get("slug");
     let products;
+    if (slug) {
+      products = await Product.findOne({ slug: slug });
+      if (!products) {
+        return NextResponse.json(
+          { error: "Product not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(products, { status: 200 });
+    }
     if (category) {
       products = await Product.find({ category: new RegExp(category, "i") });
     } else {

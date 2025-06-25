@@ -1,21 +1,36 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { useCart } from "../../context/CartContext";
 
+interface Variant {
+  size: string;
+  color: string;
+  quantity: number;
+}
+interface Product {
+  _id: string;
+  title: string;
+  slug: string;
+  desc: string;
+  img: string;
+  category: string;
+  price: number;
+  variants: Variant[];
+}
+
 export default function ProductClient({ slug }: { slug: string }) {
-  const { cart, subtotal, addToCart, removeFromCart, clearCart } = useCart();
-  console.log(cart, subtotal, addToCart, removeFromCart, clearCart);
-  // const price = 499;
-  // const name = "Cool T-Shirt";
-  // const size = "xl";
-  // const variant = "red";
+  const { addToCart } = useCart();
 
   const [pin, setPin] = useState<string>("");
   const [pinerror, setPinerror] = useState<string>("");
   const [service, setService] = useState<boolean | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectSize, setSelectSize] = useState<string>("");
+  const [selectColor, setSelectColor] = useState<string>("");
+
   const cheackPincode = async () => {
     if (pin.trim() === "") {
       setPinerror("please enter a valid pincode");
@@ -35,25 +50,42 @@ export default function ProductClient({ slug }: { slug: string }) {
   const onchangePin = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPin(e.target.value);
   };
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/getproducts?slug=${slug}`
+        );
+        const data = await res.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("failed to fetch product" + error);
+      }
+    };
+    fetchProduct();
+  }, [slug]);
   return (
     <div>
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-5 mx-auto">
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
-            <Image
-              alt="ecommerce"
-              className="lg:w-1/2 w-full lg:h-1/3 object-cover object-top rounded px-14"
-              width={800}
-              height={800}
-              src="/t-shirt-image.jpg"
-              priority
-            />
+            {product && (
+              <Image
+                alt={product?.title}
+                className="lg:w-1/2 w-full lg:h-1/3 object-cover object-top rounded px-14"
+                width={800}
+                height={800}
+                src={product?.img}
+                priority
+              />
+            )}
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
                 BRAND NAME
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                The Catcher in the Rye
+                {product?.title}
               </h1>
               <div className="flex mb-4">
                 <span className="flex items-center">
@@ -153,29 +185,48 @@ export default function ProductClient({ slug }: { slug: string }) {
                   </a>
                 </span>
               </div>
-              <p className="leading-relaxed">
-                Fam locavore kickstarter distillery. Mixtape chillwave tumeric
-                sriracha taximy chia microdosing tilde DIY. XOXO fam indxgo
-                juiceramps cornhole raw denim forage brooklyn. Everyday carry +1
-                seitan poutine tumeric. Gastropub blue bottle austin listicle
-                pour-over, neutra jean shorts keytar banjo tattooed umami
-                cardigan.
-              </p>
+              <p className="leading-relaxed">{product?.desc}</p>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                 <div className="flex">
                   <span className="mr-3">Color</span>
-                  <button className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
-                  <button className="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
-                  <button className="border-2 border-gray-300 ml-1 bg-purple-500 rounded-full w-6 h-6 focus:outline-none"></button>
+                  {Array.from(
+                    new Set(
+                      product?.variants
+                        .filter((v) => v.quantity > 0)
+                        .map((v) => v.color)
+                    )
+                  ).map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectColor(color)}
+                      className={`border-2 border-gray-300 ml-1 rounded-full w-6 h-6 focus:outline-none
+                        ${selectColor === color ? "ring-2 ring-purple-500" : ""}
+                        `}
+                      style={{ backgroundColor: color.toLowerCase() }}
+                      title={color}
+                    ></button>
+                  ))}
                 </div>
                 <div className="flex ml-6 items-center">
                   <span className="mr-3">Size</span>
                   <div className="relative">
-                    <select className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-base pl-3 pr-10">
-                      <option>SM</option>
-                      <option>M</option>
-                      <option>L</option>
-                      <option>XL</option>
+                    <select
+                      className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-base pl-3 pr-10"
+                      value={selectSize}
+                      onChange={(e) => setSelectSize(e.target.value)}
+                    >
+                      <option value={""} disabled>
+                        Select Size
+                      </option>
+                      {Array.from(
+                        new Set(
+                          product?.variants
+                            .filter((v) => v.quantity > 0)
+                            .map((v) => v.size)
+                        )
+                      ).map((sixe) => (
+                        <option key={sixe}>{sixe.toUpperCase()}</option>
+                      ))}
                     </select>
                     <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                       <svg
@@ -195,15 +246,26 @@ export default function ProductClient({ slug }: { slug: string }) {
               </div>
               <div className="flex">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  $58.00
+                  ₹{product?.price}
                 </span>
                 <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
                   Buy Now
                 </button>
                 <button
-                  onClick={() =>
-                    addToCart(slug, 1, 499, "Cool T-Shirt", "xl", "red")
-                  }
+                  onClick={() => {
+                    if (!selectSize || !selectColor) {
+                      alert("please select size and color");
+                      return;
+                    }
+                    addToCart(
+                      product?.slug || "",
+                      1,
+                      product?.price || 0,
+                      product?.title || "",
+                      selectSize,
+                      selectColor
+                    );
+                  }}
                   className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
                 >
                   <IoMdAddCircleOutline className="mx-2 font-bold text-xl" />
@@ -263,7 +325,6 @@ export default function ProductClient({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
-      <h1>Product Slug: {slug}</h1>
     </div>
   );
 }
