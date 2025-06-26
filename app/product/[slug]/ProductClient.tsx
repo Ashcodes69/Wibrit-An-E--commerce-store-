@@ -30,6 +30,7 @@ export default function ProductClient({ slug }: { slug: string }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectSize, setSelectSize] = useState<string>("");
   const [selectColor, setSelectColor] = useState<string>("");
+  const [invalidCombo, setInvalidCombo] = useState<boolean | null>(null);
 
   const cheackPincode = async () => {
     if (pin.trim() === "") {
@@ -65,6 +66,42 @@ export default function ProductClient({ slug }: { slug: string }) {
     };
     fetchProduct();
   }, [slug]);
+
+  const avaliableColors = React.useMemo(() => {
+    if (!product) return [];
+    return Array.from(
+      new Set(
+        product.variants
+          .filter(
+            (v) => v.quantity > 0 && (!selectSize || v.size === selectSize)
+          )
+          .map((v) => v.color)
+      )
+    );
+  }, [product, selectSize]);
+  const avaliableSize = React.useMemo(() => {
+    if (!product) return [];
+    return Array.from(
+      new Set(
+        product.variants
+          .filter(
+            (v) => v.quantity > 0 && (!selectColor || v.color === selectColor)
+          )
+          .map((v) => v.size)
+      )
+    );
+  }, [product, selectColor]);
+  useEffect(() => {
+    if (!selectColor || !selectSize || !product) {
+      setInvalidCombo(null);
+      return;
+    }
+    const match = product?.variants.some(
+      (v) => v.color === selectColor && v.size === selectSize && v.quantity > 0
+    );
+    setInvalidCombo(!match);
+  }, [selectSize, selectColor, product]);
+
   return (
     <div>
       <section className="text-gray-600 body-font overflow-hidden">
@@ -189,13 +226,7 @@ export default function ProductClient({ slug }: { slug: string }) {
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                 <div className="flex">
                   <span className="mr-3">Color</span>
-                  {Array.from(
-                    new Set(
-                      product?.variants
-                        .filter((v) => v.quantity > 0)
-                        .map((v) => v.color)
-                    )
-                  ).map((color) => (
+                  {avaliableColors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectColor(color)}
@@ -218,13 +249,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                       <option value={""} disabled>
                         Select Size
                       </option>
-                      {Array.from(
-                        new Set(
-                          product?.variants
-                            .filter((v) => v.quantity > 0)
-                            .map((v) => v.size)
-                        )
-                      ).map((sixe) => (
+                      {avaliableSize.map((sixe) => (
                         <option key={sixe}>{sixe.toUpperCase()}</option>
                       ))}
                     </select>
@@ -254,9 +279,10 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <button
                   onClick={() => {
                     if (!selectSize || !selectColor) {
-                      alert("please select size and color");
+                      setInvalidCombo(true);
                       return;
                     }
+                    if (invalidCombo) return;
                     addToCart(
                       product?.slug || "",
                       1,
@@ -271,6 +297,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                   <IoMdAddCircleOutline className="mx-2 font-bold text-xl" />
                   To Cart
                 </button>
+
                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                   <svg
                     fill="currentColor"
@@ -284,6 +311,12 @@ export default function ProductClient({ slug }: { slug: string }) {
                   </svg>
                 </button>
               </div>
+              {invalidCombo && (
+                <p className="text-sm text-red-600 font-medium mt-2">
+                  Please select Size and Color
+                </p>
+              )}
+
               <div className="pin mt-6 bg-purple-50 p-4 rounded-lg shadow-md">
                 <p className="text-gray-800 font-medium mb-2">
                   Check delivery service availability in your area
