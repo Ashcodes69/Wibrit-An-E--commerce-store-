@@ -1,25 +1,3 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-/* @import "tailwindcss"; */
-
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-} */
  @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,11 +13,30 @@ body {
     --foreground: #ededed;
   }
 }
+.cartScroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}
 
-/* ✅ This only sets the base color; children can override it with Tailwind */
-/* body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-} */
+.cartScroll::-webkit-scrollbar {
+  display: none;            /* Chrome, Safari */
+}
+body {
+  overflow-y: scroll; /* ensures layout doesn't shift */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari */
+}
+html {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
 

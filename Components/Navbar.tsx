@@ -93,63 +93,77 @@ function Navbar() {
           </div>
         )}
       </header>
-
       <div
         ref={ref}
-        className="sideCart fixed top-0 right-0 w-80 bg-[#4B0082] text-white p-6 z-50 overflow-y-auto shadow-lg transform transition-transform translate-x-full"
+        className="sideCart fixed top-0 right-0 w-80 bg-[#4B0082] text-white p-6 z-50 shadow-lg transform transition-transform translate-x-full h-full flex flex-col"
       >
-        <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
-        <button
-          onClick={toggleCart}
-          className="absolute top-2 right-2 text-3xl font-bold"
-        >
-          <IoMdCloseCircle />
-        </button>
-        <ul className="list-decimal font-semibold">
-          {cart && Object.keys(cart).length === 0 && (
-            <li className="text-center text-sm">Cart is Empty</li>
-          )}
-          {cart &&
-            Object.keys(cart).map((k) => {
-              return (
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Shopping Cart</h2>
+          <button onClick={toggleCart} className="text-3xl font-bold">
+            <IoMdCloseCircle />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto pr-2 cartScroll">
+          <ul className="list-decimal font-semibold space-y-4">
+            {cart && Object.keys(cart).length === 0 && (
+              <li className="text-center text-sm">Cart is Empty</li>
+            )}
+            {cart &&
+              Object.keys(cart).map((k) => (
                 <li key={k}>
-                  <div className="item flex items-center justify-between w-full py-2 whitespace-nowrap">
-                    <div className="w-1/2 truncate pr-2 font-semibold">
-                      {cart[k].name}
-                    </div>
-                    <div className="flex items-center justify-center w-1/2 text-xl gap-2">
-                      <CiCircleMinus
-                        onClick={() => removeFromCart(k, 1)}
-                        className="cursor-pointer"
-                      />
-                      <span>{cart[k].qty}</span>
-                      <CiCirclePlus
-                        onClick={() => addToCart(k, 1)}
-                        className="cursor-pointer"
-                      />
+                  <div className="item flex gap-3 items-center border-b border-purple-700 pb-3">
+                    <Image
+                      src={cart[k].img}
+                      alt={cart[k].name}
+                      width={60}
+                      height={60}
+                      className="rounded-lg border border-purple-400 shadow-md"
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold truncate">
+                        {cart[k].name}
+                      </div>
+                      <div className="text-xs text-purple-200">
+                        Size: {cart[k].size} | Color: {cart[k].variant}
+                      </div>
+                      <div className="flex items-center mt-2 gap-3 text-purple-200 text-lg">
+                        <CiCircleMinus
+                          onClick={() => removeFromCart(k, 1)}
+                          className="cursor-pointer hover:text-white"
+                        />
+                        <span className="font-semibold text-white">
+                          {cart[k].qty}
+                        </span>
+                        <CiCirclePlus
+                          onClick={() => addToCart(k, 1)}
+                          className="cursor-pointer hover:text-white"
+                        />
+                      </div>
                     </div>
                   </div>
                 </li>
-              );
-            })}
-        </ul>
-        <span className="font-bold">Total Amount: ₹{subtotal}</span>
-
-        <div className="flex justify-center gap-3 mt-12">
-          <Link href={"/checkout"}>
-            <button className="flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300">
-              <IoBagCheck />
-              Checkout
+              ))}
+          </ul>
+        </div>
+        <div className="pt-4 border-t border-purple-700 mt-4">
+          <span className="font-bold block mb-3">
+            Total Amount: ₹{subtotal}
+          </span>
+          <div className="flex justify-center gap-3">
+            <Link href="/checkout">
+              <button className="flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300">
+                <IoBagCheck />
+                Checkout
+              </button>
+            </Link>
+            <button
+              onClick={clearCart}
+              className="flex items-center gap-2 text-white bg-[#B91C1C] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#991B1B] rounded-lg shadow-sm transition duration-300"
+            >
+              <MdOutlineRemoveShoppingCart />
+              ClearCart
             </button>
-          </Link>
-
-          <button
-            onClick={clearCart}
-            className="flex items-center gap-2 text-white bg-[#B91C1C] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#991B1B] rounded-lg shadow-sm transition duration-300"
-          >
-            <MdOutlineRemoveShoppingCart />
-            ClearCart
-          </button>
+          </div>
         </div>
       </div>
     </>

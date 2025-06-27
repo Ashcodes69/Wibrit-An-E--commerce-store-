@@ -72,32 +72,28 @@ export default function ProductClient({ slug }: { slug: string }) {
     return Array.from(
       new Set(
         product.variants
-          .filter(
-            (v) => v.quantity > 0 && (!selectSize || v.size === selectSize)
+          .filter((v) =>
+            selectSize
+              ? v.size.toLowerCase() === selectSize.toLowerCase() && v.quantity > 0
+              : v.quantity > 0
           )
           .map((v) => v.color)
       )
     );
   }, [product, selectSize]);
+
   const avaliableSize = React.useMemo(() => {
     if (!product) return [];
-    return Array.from(
-      new Set(
-        product.variants
-          .filter(
-            (v) => v.quantity > 0 && (!selectColor || v.color === selectColor)
-          )
-          .map((v) => v.size)
-      )
-    );
-  }, [product, selectColor]);
+    return Array.from(new Set(product.variants.map((v) => v.size.toLowerCase())));
+  }, [product]);
+ 
   useEffect(() => {
-    if (!selectColor || !selectSize || !product) {
+    if (!selectColor || !selectSize.toLowerCase() || !product) {
       setInvalidCombo(null);
       return;
     }
     const match = product?.variants.some(
-      (v) => v.color === selectColor && v.size === selectSize && v.quantity > 0
+      (v) => v.color === selectColor && v.size.toLowerCase() === selectSize && v.quantity > 0
     );
     setInvalidCombo(!match);
   }, [selectSize, selectColor, product]);
@@ -122,7 +118,8 @@ export default function ProductClient({ slug }: { slug: string }) {
                 BRAND NAME
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                {product?.title}
+                {product?.title}, {selectColor && `-${selectColor}`}
+                {selectSize && ` /${selectSize}`}
               </h1>
               <div className="flex mb-4">
                 <span className="flex items-center">
@@ -244,13 +241,13 @@ export default function ProductClient({ slug }: { slug: string }) {
                     <select
                       className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-base pl-3 pr-10"
                       value={selectSize}
-                      onChange={(e) => setSelectSize(e.target.value)}
+                      onChange={(e) => setSelectSize(e.target.value.toLowerCase())}
                     >
                       <option value={""} disabled>
                         Select Size
                       </option>
-                      {avaliableSize.map((sixe) => (
-                        <option key={sixe}>{sixe.toUpperCase()}</option>
+                      {avaliableSize.map((size) => (
+                        <option key={size} value={size.toLowerCase()}>{size.toUpperCase()}</option>
                       ))}
                     </select>
                     <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
@@ -288,8 +285,9 @@ export default function ProductClient({ slug }: { slug: string }) {
                       1,
                       product?.price || 0,
                       product?.title || "",
-                      selectSize,
-                      selectColor
+                      selectSize, 
+                      selectColor, 
+                      product?.img || "" 
                     );
                   }}
                   className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"

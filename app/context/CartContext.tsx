@@ -7,6 +7,7 @@ type CartItem = {
   name: string;
   size: string;
   variant: string;
+  img:string;
 };
 
 type Cart = {
@@ -22,7 +23,8 @@ type CartContextType = {
     price?: number,
     name?: string,
     size?: string,
-    variant?: string
+    variant?: string,
+    img?:string
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
@@ -80,17 +82,18 @@ export default function CartProvider({
     price?: number,
     name?: string,
     size?: string,
-    variant?: string
+    variant?: string,
+    img?:string
   ) => {
     let key = itemCodeOrKey;
     const newCart = { ...cart };
 
-    if (price !== undefined && name && size && variant) {
+    if (price !== undefined && name && size && variant && img) {
       key = `${itemCodeOrKey}-${size}-${variant}`;
       if (key in newCart) {
         newCart[key].qty += qty;
       } else {
-        newCart[key] = { qty, price, name, size, variant };
+        newCart[key] = { qty, price, name, size, variant,img };
       }
     } else {
       if (key in newCart) {
