@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { useCart } from "../../context/CartContext";
+import { ToastContainer, toast, Zoom } from "react-toastify";
 
 interface Variant {
   size: string;
@@ -22,7 +23,7 @@ interface Product {
 }
 
 export default function ProductClient({ slug }: { slug: string }) {
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
 
   const [pin, setPin] = useState<string>("");
   const [pinerror, setPinerror] = useState<string>("");
@@ -44,8 +45,30 @@ export default function ProductClient({ slug }: { slug: string }) {
 
     if (pinJson.pinCodes.includes(Number(pin))) {
       setService(true);
+      toast.success("Delivery is available at your pincode", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Zoom,
+      });
     } else {
       setService(false);
+      toast.error("Sorry! Delivery is not available at your pincode", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Zoom,
+      });
     }
   };
   const onchangePin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +97,8 @@ export default function ProductClient({ slug }: { slug: string }) {
         product.variants
           .filter((v) =>
             selectSize
-              ? v.size.toLowerCase() === selectSize.toLowerCase() && v.quantity > 0
+              ? v.size.toLowerCase() === selectSize.toLowerCase() &&
+                v.quantity > 0
               : v.quantity > 0
           )
           .map((v) => v.color)
@@ -84,22 +108,39 @@ export default function ProductClient({ slug }: { slug: string }) {
 
   const avaliableSize = React.useMemo(() => {
     if (!product) return [];
-    return Array.from(new Set(product.variants.map((v) => v.size.toLowerCase())));
+    return Array.from(
+      new Set(product.variants.map((v) => v.size.toLowerCase()))
+    );
   }, [product]);
- 
+
   useEffect(() => {
     if (!selectColor || !selectSize.toLowerCase() || !product) {
       setInvalidCombo(null);
       return;
     }
     const match = product?.variants.some(
-      (v) => v.color === selectColor && v.size.toLowerCase() === selectSize && v.quantity > 0
+      (v) =>
+        v.color === selectColor &&
+        v.size.toLowerCase() === selectSize &&
+        v.quantity > 0
     );
     setInvalidCombo(!match);
   }, [selectSize, selectColor, product]);
-
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Zoom}
+      />
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-5 mx-auto">
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
@@ -241,13 +282,17 @@ export default function ProductClient({ slug }: { slug: string }) {
                     <select
                       className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-base pl-3 pr-10"
                       value={selectSize}
-                      onChange={(e) => setSelectSize(e.target.value.toLowerCase())}
+                      onChange={(e) =>
+                        setSelectSize(e.target.value.toLowerCase())
+                      }
                     >
                       <option value={""} disabled>
                         Select Size
                       </option>
                       {avaliableSize.map((size) => (
-                        <option key={size} value={size.toLowerCase()}>{size.toUpperCase()}</option>
+                        <option key={size} value={size.toLowerCase()}>
+                          {size.toUpperCase()}
+                        </option>
                       ))}
                     </select>
                     <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
@@ -270,13 +315,53 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <span className="title-font font-medium text-2xl text-gray-900">
                   ₹{product?.price}
                 </span>
-                <button className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded">
+                <button
+                  onClick={() => {
+                    if (!selectSize || !selectColor) {
+                      setInvalidCombo(true);
+                      toast.warning("Please select Size and Color", {
+                        position: "top-center",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Zoom,
+                      });
+                      return;
+                    }
+                    if (invalidCombo) return;
+                    buyNow(
+                      product?.slug || "",
+                      1,
+                      product?.price || 0,
+                      product?.title || "",
+                      selectSize,
+                      selectColor,
+                      product?.img || ""
+                    );
+                  }}
+                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
+                >
                   Buy Now
                 </button>
                 <button
                   onClick={() => {
                     if (!selectSize || !selectColor) {
                       setInvalidCombo(true);
+                      toast.warning("Please select Size and Color", {
+                        position: "top-center",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Zoom,
+                      });
                       return;
                     }
                     if (invalidCombo) return;
@@ -285,10 +370,21 @@ export default function ProductClient({ slug }: { slug: string }) {
                       1,
                       product?.price || 0,
                       product?.title || "",
-                      selectSize, 
-                      selectColor, 
-                      product?.img || "" 
+                      selectSize,
+                      selectColor,
+                      product?.img || ""
                     );
+                    toast.success("Product is added to Cart", {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: false,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                      transition: Zoom,
+                    });
                   }}
                   className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
                 >

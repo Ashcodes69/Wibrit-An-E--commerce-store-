@@ -1,5 +1,7 @@
 "use client";
 import React, { createContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; 
+
 
 type CartItem = {
   qty: number;
@@ -28,6 +30,15 @@ type CartContextType = {
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
+    buyNow: (
+    itemCodeOrKey: string,
+    qty: number,
+    price?: number,
+    name?: string,
+    size?: string,
+    variant?: string,
+    img?:string
+  ) => void;
 };
 
 export const CartContext = createContext<CartContextType>({
@@ -36,6 +47,7 @@ export const CartContext = createContext<CartContextType>({
   addToCart: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
+  buyNow: () => {},
 });
 
 export default function CartProvider({
@@ -46,6 +58,8 @@ export default function CartProvider({
   const [cart, setCart] = useState<Cart>({});
   const [subtotal, setSubtotal] = useState<number>(0);
   const [isHydrated, setIsHydrated] = useState(false);
+    const router = useRouter()
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -120,12 +134,37 @@ export default function CartProvider({
     setCart({});
     saveCart({});
   };
+const buyNow = (
+  itemCodeOrKey: string,
+  qty: number,
+  price?: number,
+  name?: string,
+  size?: string,
+  variant?: string,
+  img?: string
+) => {
+  const key = `${itemCodeOrKey}-${size}-${variant}`;
+  const newCart: Cart = {
+    [key]: {
+      qty,
+      price: price || 0,
+      name: name || "",
+      size: size || "",
+      variant: variant || "",
+      img: img || "",
+    },
+  };
+
+  setCart(newCart);
+  saveCart(newCart);
+  router.push("/checkout");
+};
 
   if (!isHydrated) return null;
 
   return (
     <CartContext.Provider
-      value={{ cart, subtotal, addToCart, removeFromCart, clearCart }}
+      value={{ cart, subtotal, addToCart, removeFromCart, clearCart, buyNow }}
     >
       {children}
     </CartContext.Provider>
