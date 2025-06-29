@@ -4,6 +4,7 @@ export interface iVariant {
   size: string;
   color: string;
   quantity: number;
+  price: number;
 }
 export interface IProduct extends Document {
   title: string;
@@ -11,7 +12,6 @@ export interface IProduct extends Document {
   desc: string;
   img: string;
   category: string;
-  price: number;
   variants: iVariant[];
 }
 
@@ -20,6 +20,7 @@ const VariantSchema: Schema = new Schema<iVariant>(
     color: { type: String, required: true },
     size: { type: String, required: true },
     quantity: { type: Number, required: true },
+    price: { type: Number, required: true },
   },
   { _id: false }
 );
@@ -30,7 +31,6 @@ const ProductSchema: Schema = new Schema<IProduct>(
     desc: { type: String, required: true },
     img: { type: String, required: true },
     category: { type: String, required: true },
-    price: { type: Number, required: true },
     variants: { type: [VariantSchema], required: true },
   },
   { timestamps: true }

@@ -1,0 +1,393 @@
+[
+  {
+    "_id": "685a0c3c9dcdb4877b5cd8bc",
+    "title": "T-Shirt hii ashu",
+    "slug": "t-shirt-blue",
+    "desc": "Blue T-shirt with cotton fabric",
+    "img": "https://m.media-amazon.com/images/I/71tX7YpPcNL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "tShirts",
+    "variants": [
+      {
+        "color": "Blue",
+        "size": "S",
+        "quantity": 10,
+        "price": 499
+      },
+      {
+        "color": "Black",
+        "size": "S",
+        "quantity": 10,
+        "price": 499
+      },
+      {
+        "color": "Blue",
+        "size": "M",
+        "quantity": 10,
+        "price": 559
+      },
+      {
+        "color": "Blue",
+        "size": "L",
+        "quantity": 10,
+        "price": 599
+      },
+      {
+        "color": "Blue",
+        "size": "XL",
+        "quantity": 1,
+        "price": 639
+      },
+      {
+        "color": "Blue",
+        "size": "XXL",
+        "quantity": 10,
+        "price": 699
+      }
+    ],
+    "createdAt": "2025-06-24T02:23:56.680Z",
+    "updatedAt": "2025-06-24T02:59:36.631Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0c3c9dcdb4877b5cd8be",
+    "title": "T-Shirt Ashu V2",
+    "slug": "t-shirt-blue-v2",
+    "desc": "Comfortable cotton blue T-shirt for daily wear",
+    "img": "https://m.media-amazon.com/images/I/61xMCH-jxRL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "tShirts",
+    "variants": [
+      {
+        "color": "Blue",
+        "size": "S",
+        "quantity": 10,
+        "price": 499
+      },
+      {
+        "color": "Blue",
+        "size": "M",
+        "quantity": 10,
+        "price": 569
+      },
+      {
+        "color": "Blue",
+        "size": "L",
+        "quantity": 10,
+        "price": 719
+      },
+      {
+        "color": "Blue",
+        "size": "XL",
+        "quantity": 1,
+        "price": 799
+      },
+      {
+        "color": "Blue",
+        "size": "XXL",
+        "quantity": 10,
+        "price": 859
+      }
+    ],
+    "createdAt": "2025-06-24T02:23:56.696Z",
+    "updatedAt": "2025-06-24T02:26:59.744Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0c3c9dcdb4877b5cd8c0",
+    "title": "Casual Blue Tee Ashu",
+    "slug": "casual-blue-tshirt",
+    "desc": "Casual and lightweight blue T-shirt for summer",
+    "img": "https://m.media-amazon.com/images/I/51gws-JUpiL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "tShirts",
+    "variants": [
+      {
+        "color": "Blue",
+        "size": "S",
+        "quantity": 10,
+        "price": 599
+      },
+      {
+        "color": "Blue",
+        "size": "M",
+        "quantity": 10,
+        "price": 699
+      },
+      {
+        "color": "Blue",
+        "size": "L",
+        "quantity": 10,
+        "price": 799
+      },
+      {
+        "color": "Blue",
+        "size": "XL",
+        "quantity": 1,
+        "price": 899
+      },
+      {
+        "color": "Blue",
+        "size": "XXL",
+        "quantity": 10,
+        "price": 1500
+      }
+    ],
+    "createdAt": "2025-06-24T02:23:56.699Z",
+    "updatedAt": "2025-06-24T02:26:59.747Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0c3c9dcdb4877b5cd8c2",
+    "title": "Everyday Fit T-Shirt",
+    "slug": "everyday-fit-blue-tee",
+    "desc": "Perfect fit blue T-shirt for everyday style",
+    "img": "https://m.media-amazon.com/images/I/21guqCWJ8iL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "tShirts",
+    "variants": [
+      {
+        "color": "Blue",
+        "size": "S",
+        "quantity": 10,
+        "price": 399
+      },
+      {
+        "color": "Blue",
+        "size": "M",
+        "quantity": 10,
+        "price": 439
+      },
+      {
+        "color": "Blue",
+        "size": "L",
+        "quantity": 10,
+        "price": 499
+      },
+      {
+        "color": "Blue",
+        "size": "XL",
+        "quantity": 1,
+        "price": 549
+      },
+      {
+        "color": "Blue",
+        "size": "XXL",
+        "quantity": 10,
+        "price": 699
+      }
+    ],
+    "createdAt": "2025-06-24T02:23:56.703Z",
+    "updatedAt": "2025-06-24T02:26:59.750Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0dd19dcdb4877b5cd8cd",
+    "title": "Classic White Mug",
+    "slug": "classic-white-mug",
+    "desc": "Simple and elegant white ceramic mug perfect for home or office use.",
+    "img": "https://m.media-amazon.com/images/I/81W0+3diGiL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Mugs",
+    "variants": [
+      {
+        "color": "White",
+        "size": "350ml",
+        "quantity": 25,
+        "price": 299
+      }
+    ],
+    "createdAt": "2025-06-24T02:30:41.405Z",
+    "updatedAt": "2025-06-24T02:30:41.405Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0dd19dcdb4877b5cd8cf",
+    "title": "Travel Steel Mug",
+    "slug": "travel-steel-mug",
+    "desc": "Insulated stainless steel mug ideal for traveling and outdoor use.",
+    "img": "https://m.media-amazon.com/images/I/61InycGBJoL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Mugs",
+    "variants": [
+      {
+        "color": "Silver",
+        "size": "500ml",
+        "quantity": 15,
+        "price": 299
+      }
+    ],
+    "createdAt": "2025-06-24T02:30:41.413Z",
+    "updatedAt": "2025-06-24T02:30:41.413Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0dd19dcdb4877b5cd8d1",
+    "title": "Cute Cat Mug",
+    "slug": "cute-cat-mug",
+    "desc": "Adorable ceramic mug with a cat print, perfect for pet lovers.",
+    "img": "https://m.media-amazon.com/images/I/81tL762L7XL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Mugs",
+    "variants": [
+      {
+        "color": "Pink",
+        "size": "400ml",
+        "quantity": 30,
+        "price": 349
+      }
+    ],
+    "createdAt": "2025-06-24T02:30:41.415Z",
+    "updatedAt": "2025-06-24T02:30:41.415Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0dd19dcdb4877b5cd8d3",
+    "title": "Motivational Quote Mug",
+    "slug": "motivational-quote-mug",
+    "desc": "Start your day with inspiration—mug printed with motivational quotes.",
+    "img": "https://m.media-amazon.com/images/I/71SYddM7KmL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Mugs",
+    "variants": [
+      {
+        "color": "Black",
+        "size": "330ml",
+        "quantity": 20,
+        "price": 269
+      }
+    ],
+    "createdAt": "2025-06-24T02:30:41.417Z",
+    "updatedAt": "2025-06-24T02:30:41.417Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0e8a9dcdb4877b5cd8d9",
+    "title": "Black Zipper Hoodie",
+    "slug": "black-zipper-hoodie",
+    "desc": "Comfortable black hoodie with front zip and fleece lining.",
+    "img": "https://m.media-amazon.com/images/I/51aQzPbLwpL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Hoodies",
+    "variants": [
+      {
+        "color": "Black",
+        "size": "M",
+        "quantity": 12,
+        "price": 1099
+      },
+      {
+        "color": "Black",
+        "size": "L",
+        "quantity": 8,
+        "price": 1199
+      }
+    ],
+    "createdAt": "2025-06-24T02:33:46.576Z",
+    "updatedAt": "2025-06-24T02:33:46.576Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0e8a9dcdb4877b5cd8db",
+    "title": "Navy Blue Pullover Hoodie",
+    "slug": "navy-blue-pullover-hoodie",
+    "desc": "Soft cotton navy blue hoodie with a kangaroo pocket and drawstring hood.",
+    "img": "https://m.media-amazon.com/images/I/61h4E8YTfGL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Hoodies",
+    "variants": [
+      {
+        "color": "Navy Blue",
+        "size": "M",
+        "quantity": 10,
+        "price": 999
+      },
+      {
+        "color": "Navy Blue",
+        "size": "XL",
+        "quantity": 6,
+        "price": 1199
+      }
+    ],
+    "createdAt": "2025-06-24T02:33:46.583Z",
+    "updatedAt": "2025-06-24T02:33:46.583Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0e8a9dcdb4877b5cd8dd",
+    "title": "Grey Winter Hoodie",
+    "slug": "grey-winter-hoodie",
+    "desc": "Thick grey hoodie perfect for cold weather, made from blended wool.",
+    "img": "https://m.media-amazon.com/images/I/71w0w8QynFL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Hoodies",
+    "variants": [
+      {
+        "color": "Grey",
+        "size": "L",
+        "quantity": 15,
+        "price": 1199
+      },
+      {
+        "color": "Grey",
+        "size": "XXL",
+        "quantity": 5,
+        "price": 1299
+      }
+    ],
+    "createdAt": "2025-06-24T02:33:46.585Z",
+    "updatedAt": "2025-06-24T02:33:46.585Z",
+    "__v": 0
+  },
+  {
+    "_id": "685a0e8a9dcdb4877b5cd8df",
+    "title": "White Graphic Hoodie",
+    "slug": "white-graphic-hoodie",
+    "desc": "Trendy white hoodie with printed graphics for a stylish streetwear look.",
+    "img": "https://m.media-amazon.com/images/I/41oxHlqVLXL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Hoodies",
+    "variants": [
+      {
+        "color": "White",
+        "size": "S",
+        "quantity": 7,
+        "price": 1299
+      },
+      {
+        "color": "White",
+        "size": "M",
+        "quantity": 9,
+        "price": 1399
+      }
+    ],
+    "createdAt": "2025-06-24T02:33:46.587Z",
+    "updatedAt": "2025-06-24T02:33:46.587Z",
+    "__v": 0
+  },
+  {
+    "_id": "685ca82fcdae043525fcd0f6",
+    "title": "Hoodie Classic Warm",
+    "slug": "hoodie-classic-warm",
+    "desc": "Premium cotton hoodie with fleece lining",
+    "img": "https://m.media-amazon.com/images/I/61OMkuoL5oL._AC_UL480_FMwebp_QL65_.jpg",
+    "category": "Hoodies",
+    "variants": [
+      {
+        "color": "Black",
+        "size": "M",
+        "quantity": 5,
+        "price": 999
+      },
+      {
+        "color": "Blue",
+        "size": "M",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "color": "Red",
+        "size": "S",
+        "quantity": 2,
+        "price": 899
+      },
+      {
+        "color": "Green",
+        "size": "XL",
+        "quantity": 4,
+        "price": 1199
+      }
+    ],
+    "createdAt": "2025-06-26T01:53:51.280Z",
+    "updatedAt": "2025-06-26T01:57:31.423Z",
+    "__v": 0
+  }
+]

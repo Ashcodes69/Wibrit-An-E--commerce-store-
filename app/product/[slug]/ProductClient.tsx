@@ -6,10 +6,12 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { useCart } from "../../context/CartContext";
 import { ToastContainer, toast, Zoom } from "react-toastify";
 
+// interface of the product and its variants
 interface Variant {
   size: string;
   color: string;
   quantity: number;
+  price: number;
 }
 interface Product {
   _id: string;
@@ -18,7 +20,6 @@ interface Product {
   desc: string;
   img: string;
   category: string;
-  price: number;
   variants: Variant[];
 }
 
@@ -34,6 +35,7 @@ export default function ProductClient({ slug }: { slug: string }) {
   const [invalidCombo, setInvalidCombo] = useState<boolean | null>(null);
 
   const cheackPincode = async () => {
+    //function to cheac service avalablity in a particular pincode/aea
     if (pin.trim() === "") {
       setPinerror("please enter a valid pincode");
       setService(null);
@@ -76,6 +78,7 @@ export default function ProductClient({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
+    //function to fetch a product from a data base through its unique slug
     const fetchProduct = async () => {
       try {
         const res = await fetch(
@@ -83,6 +86,11 @@ export default function ProductClient({ slug }: { slug: string }) {
         );
         const data = await res.json();
         setProduct(data);
+        if (data?.variants?.length > 0) {
+          setSelectColor(data.variants[0].color.toLowerCase());
+          setSelectSize(data.variants[0].size.toLowerCase());
+          setInvalidCombo(false);
+        }
       } catch (error) {
         console.error("failed to fetch product" + error);
       }
@@ -91,6 +99,7 @@ export default function ProductClient({ slug }: { slug: string }) {
   }, [slug]);
 
   const avaliableColors = React.useMemo(() => {
+    //function to cheack avalable colors according to size
     if (!product) return [];
     return Array.from(
       new Set(
@@ -107,6 +116,7 @@ export default function ProductClient({ slug }: { slug: string }) {
   }, [product, selectSize]);
 
   const avaliableSize = React.useMemo(() => {
+    //function to display all the sizes of the product and from its all variants
     if (!product) return [];
     return Array.from(
       new Set(product.variants.map((v) => v.size.toLowerCase()))
@@ -114,13 +124,14 @@ export default function ProductClient({ slug }: { slug: string }) {
   }, [product]);
 
   useEffect(() => {
-    if (!selectColor || !selectSize.toLowerCase() || !product) {
+    //function to verify that product size and colors all are avalable and user select the currect one
+    if (!product || !selectColor || !selectSize.toLowerCase() || !product) {
       setInvalidCombo(null);
       return;
     }
     const match = product?.variants.some(
       (v) =>
-        v.color === selectColor &&
+        v.color.toLowerCase() === selectColor &&
         v.size.toLowerCase() === selectSize &&
         v.quantity > 0
     );
@@ -267,9 +278,10 @@ export default function ProductClient({ slug }: { slug: string }) {
                   {avaliableColors.map((color) => (
                     <button
                       key={color}
-                      onClick={() => setSelectColor(color)}
+                      value={color.toLowerCase()}
+                      onClick={() => setSelectColor(color.toLowerCase())}
                       className={`border-2 border-gray-300 ml-1 rounded-full w-6 h-6 focus:outline-none
-                        ${selectColor === color ? "ring-2 ring-purple-500" : ""}
+                        ${selectColor === color.toLowerCase() ? "ring-2 ring-purple-500" : ""}
                         `}
                       style={{ backgroundColor: color.toLowerCase() }}
                       title={color}
@@ -281,14 +293,11 @@ export default function ProductClient({ slug }: { slug: string }) {
                   <div className="relative">
                     <select
                       className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-base pl-3 pr-10"
-                      value={selectSize}
+                      value={selectSize.toLowerCase()}
                       onChange={(e) =>
                         setSelectSize(e.target.value.toLowerCase())
                       }
                     >
-                      <option value={""} disabled>
-                        Select Size
-                      </option>
                       {avaliableSize.map((size) => (
                         <option key={size} value={size.toLowerCase()}>
                           {size.toUpperCase()}
@@ -313,7 +322,14 @@ export default function ProductClient({ slug }: { slug: string }) {
               </div>
               <div className="flex">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  ₹{product?.price}
+                  ₹
+                  {selectSize && selectColor
+                    ? product?.variants.find(
+                        (v) =>
+                          v.color.toLowerCase() === selectColor.toLowerCase() &&
+                          v.size.toLowerCase() === selectSize.toLowerCase()
+                      )?.price ?? "00"
+                    : "00"}
                 </span>
                 <button
                   onClick={() => {
@@ -333,10 +349,16 @@ export default function ProductClient({ slug }: { slug: string }) {
                       return;
                     }
                     if (invalidCombo) return;
+                    const selectedVariant = product?.variants.find(
+                      (v) =>
+                        v.color.toLowerCase() === selectColor &&
+                        v.size.toLowerCase() === selectSize
+                    );
+                    if (!selectedVariant) return;
                     buyNow(
                       product?.slug || "",
                       1,
-                      product?.price || 0,
+                      selectedVariant.price || 0,
                       product?.title || "",
                       selectSize,
                       selectColor,
@@ -365,10 +387,16 @@ export default function ProductClient({ slug }: { slug: string }) {
                       return;
                     }
                     if (invalidCombo) return;
+                    const selectedVariant = product?.variants.find(
+                      (v) =>
+                        v.color.toLowerCase() === selectColor &&
+                        v.size.toLowerCase() === selectSize
+                    );
+                    if (!selectedVariant) return;
                     addToCart(
                       product?.slug || "",
                       1,
-                      product?.price || 0,
+                      selectedVariant.price || 0,
                       product?.title || "",
                       selectSize,
                       selectColor,
@@ -405,7 +433,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                   </svg>
                 </button>
               </div>
-              {invalidCombo && (
+              {invalidCombo === true && (
                 <p className="text-sm text-red-600 font-medium mt-2">
                   Please select Size and Color
                 </p>

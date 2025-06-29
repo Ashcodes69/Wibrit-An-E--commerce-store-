@@ -7,6 +7,7 @@ interface Variant {
   size: string;
   color: string;
   quantity: number;
+  price: number;
 }
 interface Product {
   _id: string;
@@ -15,7 +16,6 @@ interface Product {
   desc: string;
   img: string;
   category: string;
-  price: number;
   variants: Variant[];
 }
 
@@ -65,7 +65,7 @@ function Tshirts() {
                   {item.title}
                 </h2>
                 <p className="mt-2 text-lg font-bold text-indigo-600">
-                  ₹{item.price}
+                  ₹{item.variants[0]?.price}
                 </p>
 
                 <div className="mt-4">
