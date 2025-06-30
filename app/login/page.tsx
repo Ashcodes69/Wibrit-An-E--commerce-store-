@@ -1,8 +1,70 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast, Zoom } from "react-toastify";
 
 function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === "email") {
+      setEmail(e.target.value);
+    }
+    if (e.target.name === "password") {
+      setPassword(e.target.value);
+    }
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = { email, password };
+    try {
+      const responce = await fetch("http://localhost:3000/api/logIn", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await responce.json();
+      if (responce.ok) {
+        console.log(result.message);
+        setEmail("");
+        setPassword("");
+        toast.success(`Welcome back to, ${result.Name}!`, {
+          position: "bottom-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Zoom,
+        });
+        setTimeout(() => {
+          router.push("http://localhost:3000");
+        }, 2000);
+      } else {
+        toast.error(result.error, {
+          position: "bottom-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Zoom,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to submit:", error);
+    }
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#f8f4fd] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 md:p-10">
@@ -13,12 +75,32 @@ function Login() {
           Login to your WIBRIT account
         </p>
 
-        <form className="space-y-5">
+        <form onSubmit={handleSubmit} method="POST" className="space-y-5">
+          <ToastContainer
+            position="top-center"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Zoom}
+          />
           <div>
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="email">
+            <label
+              className="block text-gray-700 font-medium mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
+              onChange={handleChange}
+              value={email}
+              name="email"
+              autoComplete="email"
               type="email"
               id="email"
               className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -28,10 +110,17 @@ function Login() {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="password">
+            <label
+              className="block text-gray-700 font-medium mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
+              onChange={handleChange}
+              value={password}
+              name="password"
+              autoComplete="new-password"
               type="password"
               id="password"
               className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -45,7 +134,10 @@ function Login() {
               <input type="checkbox" className="accent-purple-600" />
               Remember me
             </label>
-            <Link href="/ForgotPassword" className="text-purple-600 hover:underline">
+            <Link
+              href="/ForgotPassword"
+              className="text-purple-600 hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
@@ -60,7 +152,10 @@ function Login() {
 
         <p className="text-center text-gray-500 mt-6 text-sm">
           Don’t have an account?{" "}
-          <Link href="/signup" className="text-purple-600 hover:underline font-medium">
+          <Link
+            href="/signup"
+            className="text-purple-600 hover:underline font-medium"
+          >
             Sign up
           </Link>
         </p>
