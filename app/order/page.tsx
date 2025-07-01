@@ -8,7 +8,6 @@ function Order() {
   return (
     <section className="bg-purple-50 min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-        {/* Header */}
         <div className="mb-10 text-center">
           <h2 className="text-sm font-semibold text-purple-700 tracking-widest">
             WIBRIT.COM

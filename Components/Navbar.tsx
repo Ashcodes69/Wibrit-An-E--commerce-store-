@@ -13,9 +13,19 @@ import { IoBagCheck } from "react-icons/io5";
 import { useCart } from "../app/context/CartContext";
 
 function Navbar() {
-  const { cart, subtotal, addToCart, removeFromCart, clearCart } = useCart();
+  const {
+    cart,
+    subtotal,
+    user,
+    isHydrated,
+    logout,
+    addToCart,
+    removeFromCart,
+    clearCart,
+  } = useCart();
   const ref = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdown, setDropdown] = useState(false);
 
   const toggleCart = () => {
     if (ref.current?.classList.contains("translate-x-full")) {
@@ -54,11 +64,47 @@ function Navbar() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {/* account icon */}
-            <Link href={"/login"}>
-              <MdAccountCircle className="text-3xl text-black hover:text-purple-700 transition" />
-            </Link>
-            {/* cart icon */}
+            {isHydrated &&
+              (user?.value ? (
+                <div
+                  className="relative"
+                  onMouseEnter={() => setDropdown(true)}
+                  onMouseLeave={() => setDropdown(false)}
+                >
+                  <MdAccountCircle className="text-3xl text-black hover:text-purple-700 transition cursor-pointer" />
+                  {dropdown && (
+                    <div className="absolute right-0 top-full w-48 bg-purple-50 rounded-lg shadow-lg border border-gray-200 z-50">
+                      <ul className="py-2 text-sm text-gray-700">
+                        <Link href="/myaccount">
+                          <li className="px-4 py-2 hover:bg-purple-100 hover:text-purple-800 cursor-pointer">
+                            My Account
+                          </li>
+                        </Link>
+                        <Link href="/usersOrder">
+                          <li className="px-4 py-2 hover:bg-purple-100 hover:text-purple-800 cursor-pointer">
+                            My Orders
+                          </li>
+                        </Link>
+                        <li className="px-4 py-2 hover:bg-red-100 hover:text-red-600 cursor-pointer">
+                          <button
+                            onClick={() => {
+                              logout();
+                              setDropdown(false);
+                            }}
+                            className="w-full text-left"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link href={"/login"}>
+                  <button>Login</button>
+                </Link>
+              ))}
             <button onClick={toggleCart} className="relative group">
               <MdOutlineShoppingCart className="text-3xl text-black group-hover:text-purple-700 transition" />
               <span

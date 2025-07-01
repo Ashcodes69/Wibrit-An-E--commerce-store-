@@ -7,24 +7,30 @@ import jwt from "jsonwebtoken";
 export async function POST(req: Request) {
   await connectDb();
   const body = await req.json();
+
   try {
     const { password } = body;
     const user = await User.findOne({ email: body.email });
+
     if (user) {
       const bytes = CryptoJS.AES.decrypt(user.password, "secrwt123");
       const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+
       if (password === decryptedPassword) {
         const token = jwt.sign(
           {
             Name: user.Name,
             email: user.email,
           },
-          "your_jwt_secret", 
-          { algorithm: "HS256", expiresIn: "7d" }
+          "your_jwt_secret",
+          { algorithm: "HS256", expiresIn: "2d" }
         );
+
         return NextResponse.json(
           {
             token,
+            Name: user.Name,
+            email: user.email,
           },
           { status: 200 }
         );

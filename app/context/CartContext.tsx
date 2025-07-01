@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; 
-
+import { useRouter } from "next/navigation";
 
 type CartItem = {
   qty: number;
@@ -9,9 +8,11 @@ type CartItem = {
   name: string;
   size: string;
   variant: string;
-  img:string;
+  img: string;
 };
-
+type User = {
+  value: string;
+};
 type Cart = {
   [key: string]: CartItem;
 };
@@ -19,6 +20,9 @@ type Cart = {
 type CartContextType = {
   cart: Cart;
   subtotal: number;
+  user: User | null;
+  isHydrated: boolean;
+  logout: ()=>void;
   addToCart: (
     itemCodeOrKey: string,
     qty: number,
@@ -26,24 +30,27 @@ type CartContextType = {
     name?: string,
     size?: string,
     variant?: string,
-    img?:string
+    img?: string
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
-    buyNow: (
+  buyNow: (
     itemCodeOrKey: string,
     qty: number,
     price?: number,
     name?: string,
     size?: string,
     variant?: string,
-    img?:string
+    img?: string
   ) => void;
 };
 
 export const CartContext = createContext<CartContextType>({
   cart: {},
   subtotal: 0,
+  user: null,
+  isHydrated: false,
+  logout:()=>{},
   addToCart: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
@@ -58,8 +65,30 @@ export default function CartProvider({
   const [cart, setCart] = useState<Cart>({});
   const [subtotal, setSubtotal] = useState<number>(0);
   const [isHydrated, setIsHydrated] = useState(false);
-    const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
 
+  const router = useRouter();
+  
+  const logout = () => {
+  localStorage.removeItem("token");
+  setUser(null);
+  router.refresh(); 
+};
+  useEffect(() => {
+    const loadUser = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setUser({ value: token });
+      } else {
+        setUser(null);
+      }
+    };
+    loadUser();
+    window.addEventListener("storage", loadUser);
+    return () => {
+      window.removeEventListener("storage", loadUser);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -97,7 +126,7 @@ export default function CartProvider({
     name?: string,
     size?: string,
     variant?: string,
-    img?:string
+    img?: string
   ) => {
     let key = itemCodeOrKey;
     const newCart = { ...cart };
@@ -107,7 +136,7 @@ export default function CartProvider({
       if (key in newCart) {
         newCart[key].qty += qty;
       } else {
-        newCart[key] = { qty, price, name, size, variant,img };
+        newCart[key] = { qty, price, name, size, variant, img };
       }
     } else {
       if (key in newCart) {
@@ -134,37 +163,47 @@ export default function CartProvider({
     setCart({});
     saveCart({});
   };
-const buyNow = (
-  itemCodeOrKey: string,
-  qty: number,
-  price?: number,
-  name?: string,
-  size?: string,
-  variant?: string,
-  img?: string
-) => {
-  const key = `${itemCodeOrKey}-${size}-${variant}`;
-  const newCart: Cart = {
-    [key]: {
-      qty,
-      price: price || 0,
-      name: name || "",
-      size: size || "",
-      variant: variant || "",
-      img: img || "",
-    },
-  };
+  const buyNow = (
+    itemCodeOrKey: string,
+    qty: number,
+    price?: number,
+    name?: string,
+    size?: string,
+    variant?: string,
+    img?: string
+  ) => {
+    const key = `${itemCodeOrKey}-${size}-${variant}`;
+    const newCart: Cart = {
+      [key]: {
+        qty,
+        price: price || 0,
+        name: name || "",
+        size: size || "",
+        variant: variant || "",
+        img: img || "",
+      },
+    };
 
-  setCart(newCart);
-  saveCart(newCart);
-  router.push("/checkout");
-};
+    setCart(newCart);
+    saveCart(newCart);
+    router.push("/checkout");
+  };
 
   if (!isHydrated) return null;
 
   return (
     <CartContext.Provider
-      value={{ cart, subtotal, addToCart, removeFromCart, clearCart, buyNow }}
+      value={{
+        cart,
+        subtotal,
+        user,
+        isHydrated,
+        logout,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        buyNow,
+      }}
     >
       {children}
     </CartContext.Provider>

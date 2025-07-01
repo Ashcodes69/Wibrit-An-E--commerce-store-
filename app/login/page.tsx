@@ -30,10 +30,11 @@ function Login() {
       });
       const result = await responce.json();
       if (responce.ok) {
-        console.log(result.message);
+        localStorage.setItem("token", result.token);
+        window.dispatchEvent(new Event("storage"));
         setEmail("");
         setPassword("");
-        toast.success(`Welcome back to, ${result.Name}!`, {
+        toast.success(`Welcome back to WibRit, ${result.Name}!`, {
           position: "bottom-center",
           autoClose: 2000,
           hideProgressBar: false,
