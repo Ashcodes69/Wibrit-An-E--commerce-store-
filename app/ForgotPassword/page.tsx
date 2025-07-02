@@ -1,8 +1,15 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function ForgotPassword() {
+  const router = useRouter();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.push("/");
+    }
+  }, [router]);
   return (
     <section className="min-h-[calc(100vh-4rem)] flex items-start justify-center bg-[#f8f4fd] px-4 pt-10 pb-12">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10">
@@ -10,7 +17,8 @@ function ForgotPassword() {
           Forgot Password?
         </h2>
         <p className="text-center text-gray-500 text-sm sm:text-base mb-8">
-          Enter your email address and we’ll send you a link to reset your password.
+          Enter your email address and we’ll send you a link to reset your
+          password.
         </p>
 
         <form className="space-y-5">

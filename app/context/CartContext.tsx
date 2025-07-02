@@ -66,13 +66,15 @@ export default function CartProvider({
   const [subtotal, setSubtotal] = useState<number>(0);
   const [isHydrated, setIsHydrated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+ 
 
   const router = useRouter();
   
   const logout = () => {
   localStorage.removeItem("token");
   setUser(null);
-  router.refresh(); 
+  router.refresh();
+  router.push('/') 
 };
   useEffect(() => {
     const loadUser = () => {

@@ -42,7 +42,7 @@ export default function ProductClient({ slug }: { slug: string }) {
       return;
     }
     setPinerror("");
-    const pins = await fetch("http://localhost:3000/api/pinCode");
+    const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pinCode`);
     const pinJson = await pins.json();
 
     if (pinJson.pinCodes.includes(Number(pin))) {
@@ -82,7 +82,7 @@ export default function ProductClient({ slug }: { slug: string }) {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/getproducts?slug=${slug}`
+          `${process.env.NEXT_PUBLIC_HOST}/api/getproducts?slug=${slug}`
         );
         const data = await res.json();
         setProduct(data);

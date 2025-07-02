@@ -27,7 +27,7 @@ function Tshirts() {
       try {
         const category = "tShirts";
         const res = await fetch(
-          `http://localhost:3000/api/getproducts?category=${category}`
+          `${process.env.NEXT_PUBLIC_HOST}/api/getproducts?category=${category}`
         );
         const data = await res.json();
         setProducts(data);

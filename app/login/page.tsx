@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast, Zoom } from "react-toastify";
@@ -8,6 +8,12 @@ function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.push("/");
+    }
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "email") {
@@ -21,7 +27,7 @@ function Login() {
     e.preventDefault();
     const data = { email, password };
     try {
-      const responce = await fetch("http://localhost:3000/api/logIn", {
+      const responce = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/logIn`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +41,7 @@ function Login() {
         setEmail("");
         setPassword("");
         toast.success(`Welcome back to WibRit, ${result.Name}!`, {
-          position: "bottom-center",
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
@@ -46,11 +52,11 @@ function Login() {
           transition: Zoom,
         });
         setTimeout(() => {
-          router.push("http://localhost:3000");
+          router.push("/");
         }, 2000);
       } else {
         toast.error(result.error, {
-          position: "bottom-center",
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,

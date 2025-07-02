@@ -10,6 +10,9 @@ import {
 import { IoMdCloseCircle } from "react-icons/io";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { IoBagCheck } from "react-icons/io5";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import { HiOutlineLogin } from "react-icons/hi";
+
 import { useCart } from "../app/context/CartContext";
 
 function Navbar() {
@@ -91,9 +94,10 @@ function Navbar() {
                               logout();
                               setDropdown(false);
                             }}
-                            className="w-full text-left"
+                            className="w-full text-left flex items-center gap-2"
                           >
                             Logout
+                            <RiLogoutBoxRLine />
                           </button>
                         </li>
                       </ul>
@@ -102,7 +106,10 @@ function Navbar() {
                 </div>
               ) : (
                 <Link href={"/login"}>
-                  <button>Login</button>
+                  <button className="flex items-center gap-2 hover:text-purple-800 font-bold">
+                    Login
+                    <HiOutlineLogin className="text-3xl" />
+                  </button>
                 </Link>
               ))}
             <button onClick={toggleCart} className="relative group">

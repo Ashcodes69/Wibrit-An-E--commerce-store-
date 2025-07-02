@@ -1,13 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ToastContainer, toast, Zoom } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 function Signup() {
   const [Name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useRouter();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.push("/");
+    }
+  }, [router]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "name") {
       setName(e.target.value);
@@ -23,13 +29,16 @@ function Signup() {
     e.preventDefault();
     const data = { Name, email, password };
     try {
-      const responce = await fetch("http://localhost:3000/api/signUp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const responce = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/signUp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
       const result = await responce.json();
       if (responce.ok) {
         console.log(result.message);
@@ -37,7 +46,7 @@ function Signup() {
         setEmail("");
         setPassword("");
         toast.success(result.message + "\nWelcome to Wibrit", {
-          position: "bottom-center",
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
@@ -47,9 +56,12 @@ function Signup() {
           theme: "dark",
           transition: Zoom,
         });
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else {
-        toast.error(result.error , {
-          position: "bottom-center",
+        toast.error(result.error, {
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
@@ -101,7 +113,7 @@ function Signup() {
               name="name"
               autoComplete="name"
               type="text"
-              id="name"           
+              id="name"
               className="w-full px-4 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="John Doe"
               required
