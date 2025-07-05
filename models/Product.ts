@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface iVariant {
   size: string;
   color: string;
-  quantity: number;
+  quantity: number; // its a avalable quantity of the product 
   price: number;
 }
 export interface IProduct extends Document {
@@ -19,7 +19,7 @@ const VariantSchema: Schema = new Schema<iVariant>(
   {
     color: { type: String, required: true },
     size: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    quantity: { type: Number, required: true },   // its a avalable quantity of the product 
     price: { type: Number, required: true },
   },
   { _id: false }

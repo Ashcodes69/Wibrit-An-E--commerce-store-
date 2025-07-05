@@ -9,11 +9,13 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       router.push("/");
     }
   }, [router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "name") {
       setName(e.target.value);
@@ -25,6 +27,7 @@ function Signup() {
       setPassword(e.target.value);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = { Name, email, password };
@@ -39,9 +42,12 @@ function Signup() {
           body: JSON.stringify(data),
         }
       );
+
       const result = await responce.json();
+
       if (responce.ok) {
-        console.log(result.message);
+        localStorage.setItem("token", result.token);
+        window.dispatchEvent(new Event("storage"));
         setName("");
         setEmail("");
         setPassword("");
@@ -76,6 +82,7 @@ function Signup() {
       console.error("Failed to submit:", error);
     }
   };
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#f8f4fd] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 md:p-10">

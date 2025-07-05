@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 type CartItem = {
+  _id: string;
   qty: number;
   price: number;
   name: string;
@@ -22,7 +23,7 @@ type CartContextType = {
   subtotal: number;
   user: User | null;
   isHydrated: boolean;
-  logout: ()=>void;
+  logout: () => void;
   addToCart: (
     itemCodeOrKey: string,
     qty: number,
@@ -30,7 +31,8 @@ type CartContextType = {
     name?: string,
     size?: string,
     variant?: string,
-    img?: string
+    img?: string,
+    _id?:string
   ) => void;
   removeFromCart: (itemCode: string, qty: number) => void;
   clearCart: () => void;
@@ -41,7 +43,8 @@ type CartContextType = {
     name?: string,
     size?: string,
     variant?: string,
-    img?: string
+    img?: string,
+    _id?:string
   ) => void;
 };
 
@@ -50,7 +53,7 @@ export const CartContext = createContext<CartContextType>({
   subtotal: 0,
   user: null,
   isHydrated: false,
-  logout:()=>{},
+  logout: () => {},
   addToCart: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
@@ -66,16 +69,15 @@ export default function CartProvider({
   const [subtotal, setSubtotal] = useState<number>(0);
   const [isHydrated, setIsHydrated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
- 
 
   const router = useRouter();
-  
+
   const logout = () => {
-  localStorage.removeItem("token");
-  setUser(null);
-  router.refresh();
-  router.push('/') 
-};
+    localStorage.removeItem("token");
+    setUser(null);
+    router.refresh();
+    router.push("/");
+  };
   useEffect(() => {
     const loadUser = () => {
       const token = localStorage.getItem("token");
@@ -128,17 +130,18 @@ export default function CartProvider({
     name?: string,
     size?: string,
     variant?: string,
-    img?: string
+    img?: string,
+    _id?: string
   ) => {
     let key = itemCodeOrKey;
     const newCart = { ...cart };
 
-    if (price !== undefined && name && size && variant && img) {
+    if (price !== undefined && name && size && variant && img &&_id) {
       key = `${itemCodeOrKey}-${size}-${variant}`;
       if (key in newCart) {
         newCart[key].qty += qty;
       } else {
-        newCart[key] = { qty, price, name, size, variant, img };
+        newCart[key] = { _id: _id || "", qty, price, name, size, variant, img };
       }
     } else {
       if (key in newCart) {
@@ -172,11 +175,13 @@ export default function CartProvider({
     name?: string,
     size?: string,
     variant?: string,
-    img?: string
+    img?: string,
+    _id?: string
   ) => {
     const key = `${itemCodeOrKey}-${size}-${variant}`;
     const newCart: Cart = {
       [key]: {
+        _id: _id || "",
         qty,
         price: price || 0,
         name: name || "",

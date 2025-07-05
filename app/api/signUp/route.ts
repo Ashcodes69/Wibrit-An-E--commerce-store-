@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const u = new User({
       Name,
       email,
-      password: CryptoJS.AES.encrypt(body.password, "secrwt123").toString(),
+      password: CryptoJS.AES.encrypt(body.password, process.env.AES_SECREAT!).toString(),
     });
     await u.save();
     return NextResponse.json(

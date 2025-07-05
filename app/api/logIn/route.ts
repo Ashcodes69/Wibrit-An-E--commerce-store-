@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const user = await User.findOne({ email: body.email });
 
     if (user) {
-      const bytes = CryptoJS.AES.decrypt(user.password, "secrwt123");
+      const bytes = CryptoJS.AES.decrypt(user.password, process.env.AES_SECREAT!);
       const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
 
       if (password === decryptedPassword) {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
             Name: user.Name,
             email: user.email,
           },
-          "your_jwt_secret",
+          process.env.JWT_SECREAT!,
           { algorithm: "HS256", expiresIn: "2d" }
         );
 

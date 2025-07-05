@@ -13,6 +13,7 @@ function Footer() {
               className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900"
             >
               <Image
+                priority
                 src="/name.png"
                 alt="Descriptive alt text"
                 width={500}

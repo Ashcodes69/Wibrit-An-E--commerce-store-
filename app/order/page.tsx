@@ -1,10 +1,12 @@
 "use client";
 import React from "react";
 import { useCart } from "../context/CartContext";
+import { useSearchParams } from "next/navigation";
 
 function Order() {
   const { cart, subtotal } = useCart();
-
+  const searchParams =useSearchParams()
+const orderId= searchParams.get("orderId")
   return (
     <section className="bg-purple-50 min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
@@ -15,7 +17,7 @@ function Order() {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-2">
             Your Order has been placed successfully!
           </h1>
-          <p className="text-gray-500 mt-2">Order Id:345987</p>
+          <p className="text-gray-500 mt-2">Order_Id: {orderId}</p>
 
           <p className="text-gray-500 mt-2">Thank you for shopping with us.</p>
         </div>

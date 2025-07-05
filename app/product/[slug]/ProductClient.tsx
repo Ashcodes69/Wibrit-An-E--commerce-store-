@@ -170,8 +170,8 @@ export default function ProductClient({ slug }: { slug: string }) {
                 BRAND NAME
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                {product?.title}, {selectColor && `-${selectColor}`}
-                {selectSize && ` /${selectSize}`}
+                {product?.title}, {selectColor && `-${selectColor.toUpperCase()}`}
+                {selectSize && ` /${selectSize.toUpperCase()}`}
               </h1>
               <div className="flex mb-4">
                 <span className="flex items-center">
@@ -362,7 +362,8 @@ export default function ProductClient({ slug }: { slug: string }) {
                       product?.title || "",
                       selectSize,
                       selectColor,
-                      product?.img || ""
+                      product?.img || "",
+                      product?._id
                     );
                   }}
                   className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
@@ -400,7 +401,8 @@ export default function ProductClient({ slug }: { slug: string }) {
                       product?.title || "",
                       selectSize,
                       selectColor,
-                      product?.img || ""
+                      product?.img || "",
+                      product?._id
                     );
                     toast.success("Product is added to Cart", {
                       position: "top-center",

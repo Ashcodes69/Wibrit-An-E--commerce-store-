@@ -53,8 +53,9 @@ function Tshirts() {
                   alt={item.title}
                   src={item.img}
                   height={200}
-                  width={200}
+                  width={200}             
                   className="object-contain"
+                  priority
                 />
               </div>
               <div className="p-5">
