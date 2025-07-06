@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -29,6 +29,15 @@ function Navbar() {
   const ref = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (Object.keys(cart).length > 0) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [cart]);
 
   const toggleCart = () => {
     if (ref.current?.classList.contains("translate-x-full")) {
@@ -205,14 +214,18 @@ function Navbar() {
           </span>
           <div className="flex justify-center gap-3">
             <Link href="/checkout">
-              <button className="flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300">
+              <button
+                disabled={disabled}
+                className="disabled:bg-purple-600 flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300"
+              >
                 <IoBagCheck />
                 Checkout
               </button>
             </Link>
             <button
               onClick={clearCart}
-              className="flex items-center gap-2 text-white bg-[#B91C1C] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#991B1B] rounded-lg shadow-sm transition duration-300"
+              disabled={disabled}
+              className="disabled:bg-red-500 flex items-center gap-2 text-white bg-[#B91C1C] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#991B1B] rounded-lg shadow-sm transition duration-300"
             >
               <MdOutlineRemoveShoppingCart />
               ClearCart

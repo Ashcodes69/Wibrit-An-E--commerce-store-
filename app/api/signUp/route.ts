@@ -8,10 +8,20 @@ export async function POST(req: Request) {
   const body = await req.json();
   try {
     const { Name, email } = body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { sucess: false, message: "Account already exists. Please log in." },
+        { status: 400 }
+      );
+    }
     const u = new User({
       Name,
       email,
-      password: CryptoJS.AES.encrypt(body.password, process.env.AES_SECREAT!).toString(),
+      password: CryptoJS.AES.encrypt(
+        body.password,
+        process.env.AES_SECREAT!
+      ).toString(),
     });
     await u.save();
     return NextResponse.json(
@@ -23,7 +33,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         sucess: false,
-        error: "internal server error in creating your account",
+        message: "internal server error in creating your account",
       },
       { status: 400 }
     );
