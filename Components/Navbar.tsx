@@ -12,6 +12,7 @@ import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { IoBagCheck } from "react-icons/io5";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { HiOutlineLogin } from "react-icons/hi";
+import AlertModal from "./AlertModal";
 
 import { useCart } from "../app/context/CartContext";
 
@@ -30,6 +31,10 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
 
   useEffect(() => {
     if (Object.keys(cart).length > 0) {
@@ -51,6 +56,21 @@ function Navbar() {
 
   return (
     <>
+      <AlertModal
+        showAlert={showAlert}
+        message={message}
+        success={success}
+        confirmation={confirmation}
+        onClose={() => {
+          setShowAlert(false);
+          setConfirmation(false);
+        }}
+        onConfirm={() => {
+          logout();
+          setShowAlert(false);
+          setConfirmation(false);
+        }}
+      />
       <header className="bg-white text-black shadow-md sticky top-0 z-40">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/">
@@ -101,8 +121,11 @@ function Navbar() {
                         <li className="px-4 py-2 hover:bg-red-100 hover:text-red-600 cursor-pointer">
                           <button
                             onClick={() => {
-                              logout();
                               setDropdown(false);
+                              setShowAlert(true);
+                              setConfirmation(true);
+                              setSuccess(true);
+                              setMessage("Sure! Do Youe Want To LogOut ?");
                             }}
                             className="w-full text-left flex items-center gap-2"
                           >

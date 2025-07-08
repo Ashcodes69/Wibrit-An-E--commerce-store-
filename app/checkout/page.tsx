@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import Image from "next/image";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
-import { FaCheck } from "react-icons/fa6";
-import { IoCloseSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import AlertModal from "@/Components/AlertModal";
 
 function Checkout() {
   const { cart, subtotal, addToCart, removeFromCart } = useCart();
@@ -106,43 +105,19 @@ function Checkout() {
   };
   return (
     <>
-      {showAlert && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
-          <div className="bg-purple-100 border border-purple-600 rounded-xl shadow-xl p-6 w-72 sm:w-96 text-center">
-            {success ? (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-green-300 animate-bounce mb-3">
-                  <FaCheck className="text-green-700 text-3xl" />
-                </div>
-                <p className="text-lg font-semibold text-green-900 mb-4">
-                  {message}
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-red-300 animate-bounce mb-3">
-                  <IoCloseSharp className="text-red-700 text-3xl" />
-                </div>
-                <p className="text-lg font-semibold text-red-900 mb-4">
-                  {message}
-                </p>
-              </div>
-            )}
-            <button
-              onClick={() => {
-                setShowAlert(false);
-                router.push(
-                  `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
-                );
-              }}
-              className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-full transition shadow-md"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-
+      <AlertModal
+        showAlert={showAlert}
+        message={message}
+        success={success}
+        onClose={() => {
+          setShowAlert(false);
+          if (success === true) {
+            router.push(
+              `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
+            );
+          }
+        }}
+      />
       <div className="max-w-4xl mx-auto px-6 py-10 bg-purple-100 min-h-screen rounded-2xl shadow-lg">
         <h1 className="text-center text-4xl font-extrabold text-purple-900 mb-10">
           Checkout

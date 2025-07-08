@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaCheck } from "react-icons/fa6";
-import { IoCloseSharp } from "react-icons/io5";
+// import { FaCheck } from "react-icons/fa6";
+// import { IoCloseSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import AlertModal from "@/Components/AlertModal";
 
 function Signup() {
   const [Name, setName] = useState("");
@@ -65,52 +66,25 @@ function Signup() {
       setShowAlert(true);
     } catch (error) {
       console.error("Failed to submit:", error);
-      setSuccess(false)
-      setMessage("Failedd to submit")
+      setSuccess(false);
+      setMessage("Failedd to submit");
       setShowAlert(true);
     }
   };
 
   return (
     <>
-      {showAlert && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
-          <div className="bg-purple-100 border border-purple-600 rounded-xl shadow-xl p-6 w-72 sm:w-96 text-center">
-            {success ? (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-green-300 animate-bounce mb-3">
-                  <FaCheck className="text-green-700 text-3xl" />
-                </div>
-                <p className="text-lg font-semibold text-green-900 mb-4">
-                  {message}
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-red-300 animate-bounce mb-3">
-                  <IoCloseSharp className="text-red-700 text-3xl" />
-                </div>
-                <p className="text-lg font-semibold text-red-900 mb-4">
-                  {message}
-                </p>
-              </div>
-            )}
-            <button
-              onClick={() => {
-                setShowAlert(false);
-                if (success === true) {
-                  router.push(`${process.env.NEXT_PUBLIC_HOST}/`);
-                } else {
-                  return;
-                }
-              }}
-              className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-full transition shadow-md"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
+      <AlertModal
+        showAlert={showAlert}
+        message={message}
+        success={success}
+        onClose={() => {
+          setShowAlert(false);
+          if (success === true) {
+            router.push(`${process.env.NEXT_PUBLIC_HOST}/`);
+          }
+        }}
+      />
       <section className="min-h-screen flex items-center justify-center bg-[#f8f4fd] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 md:p-10">
           <h2 className="text-3xl font-bold text-center text-purple-800 mb-6">
