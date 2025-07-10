@@ -1,35 +1,54 @@
 import { NextResponse } from "next/server";
 import Cart from "@/models/Cart";
 import connectDb from "@/middleware/mongoose";
+import jwt from "jsonwebtoken";
+
+interface JwtPayload {
+  id: string;
+  iat?: number;
+  exp?: number;
+}
 
 export async function POST(req: Request) {
   await connectDb();
-  const body = await req.json();
-  const { userId, productId, size, color, quantity } = body;
 
   try {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) throw new Error("Cart not found");
+    const body = await req.json();
 
-    const index = cart.products.findIndex(
-      (p: { productId: string; size: string; color: string }) =>
-        p.productId === productId && p.size === size && p.color === color
-    );
+    const { userId: token, products } = body;
 
-    if (index > -1) {
-      cart.products[index].quantity = quantity;
-      await cart.save();
-      return NextResponse.json({ success: true, message: "Cart updated" });
-    } else {
+    if (!token || !products) {
       return NextResponse.json(
-        { success: false, message: "Item not found" },
-        { status: 404 }
+        { success: false, message: "Missing token or products" },
+        { status: 400 }
       );
     }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+    if (!decoded?.id) {
+      return NextResponse.json(
+        { success: false, message: "Invalid token" },
+        { status: 401 }
+      );
+    }
+
+    const userId = decoded.id;
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      cart = new Cart({ userId, products });
+    } else {
+      cart.products = products;
+    }
+
+    await cart.save();
+
+    return NextResponse.json({ success: true, message: "Cart saved" });
   } catch (error) {
-    console.error(error);
+    console.error(" Error saving cart:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to update cart" },
+      { success: false, message: "Failed to save cart", error: error },
       { status: 500 }
     );
   }

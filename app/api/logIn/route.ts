@@ -13,19 +13,18 @@ export async function POST(req: Request) {
     const user = await User.findOne({ email: body.email });
 
     if (user) {
-      const bytes = CryptoJS.AES.decrypt(user.password, process.env.AES_SECREAT!);
+      const bytes = CryptoJS.AES.decrypt(
+        user.password,
+        process.env.AES_SECREAT!
+      );
       const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
 
       if (password === decryptedPassword) {
         const token = jwt.sign(
-          {
-            Name: user.Name,
-            email: user.email,
-          },
-          process.env.JWT_SECREAT!,
-          { algorithm: "HS256", expiresIn: "2d" }
+          { id: user._id, email: user.email, name: user.name },
+          process.env.JWT_SECRET!,
+          { expiresIn: "24h" }
         );
-
         return NextResponse.json(
           {
             token,
@@ -34,6 +33,7 @@ export async function POST(req: Request) {
           },
           { status: 200 }
         );
+       
       } else {
         return NextResponse.json(
           { success: false, error: "Invalid credentials" },
