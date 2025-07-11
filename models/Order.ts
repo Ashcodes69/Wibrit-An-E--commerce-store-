@@ -10,7 +10,6 @@ export interface IOrderedProduct {
 }
 export interface IOrder extends Document {
  email: string;
-  orderId: number;
   products: IOrderedProduct[];
   address: string;
   amount: number;
@@ -31,7 +30,6 @@ const OrderedProductSchema: Schema = new Schema<IOrderedProduct>(
 const OrderSchema: Schema = new Schema<IOrder>(
   {
     email: { type: String, required: true },
-    orderId: { type: Number, required: true, unique: true },
     products: { type: [OrderedProductSchema], required: true },
     address: { type: String, required: true },
     amount: { type: Number, required: true },

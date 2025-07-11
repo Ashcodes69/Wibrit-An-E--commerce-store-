@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/Components/AlertModal";
 
 function Checkout() {
-  const { cart, subtotal, addToCart, removeFromCart } = useCart();
+  const { cart, subtotal, addToCart, removeFromCart} = useCart();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
