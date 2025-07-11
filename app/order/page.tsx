@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-// import { useCart } from "../context/CartContext";
 import { useSearchParams } from "next/navigation";
 
 type OrderProduct = {
@@ -25,7 +24,6 @@ type OrderType = {
 };
 
 function Order() {
-  // const { cart, subtotal } = useCart();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 

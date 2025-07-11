@@ -198,7 +198,7 @@ useEffect(() => {
 
     updateSubtotal(newCart);
   };
-const addToCart = async (
+  const addToCart = async (
   itemCodeOrKey: string,
   qty: number,
   price?: number,
@@ -208,36 +208,39 @@ const addToCart = async (
   img?: string,
   _id?: string
 ) => {
+  const key =
+    size && variant ? `${itemCodeOrKey}-${size}-${variant}` : itemCodeOrKey;
   const newCart = { ...cart };
 
-  if (itemCodeOrKey in newCart) {
-    //  Item exists, increase qty
-    newCart[itemCodeOrKey].qty += qty;
+  if (key in newCart) {
+    newCart[key].qty += qty;
   } else {
-    //  Item doesn't exist, we must build it
-    const itemDetails = {
-      _id: _id ?? "",
-      price: price ?? 0,
-      name: name ?? "",
-      size: size ?? "",
-      variant: variant ?? "",
-      img: img ?? "",
-    };
-
-    const values = Object.values(itemDetails);
-    if (values.some((v) => v === "" || v === 0)) {
-      console.warn(" Missing values. Item not added to cart.", itemDetails);
+    if (!price || !name || !size || !variant || !img || !_id) {
+      console.warn("Missing values, item not added:", {
+        price,
+        name,
+        size,
+        variant,
+        img,
+        _id,
+      });
       return;
     }
 
-    // Create the new cart item
-    newCart[itemCodeOrKey] = { ...itemDetails, qty };
+    newCart[key] = {
+      _id,
+      qty,
+      price,
+      name,
+      size,
+      variant,
+      img,
+    };
   }
 
   setCart(newCart);
   await saveCart(newCart);
 };
-
 
   const removeFromCart = async (key: string, qty: number) => {
     const newCart = { ...cart };

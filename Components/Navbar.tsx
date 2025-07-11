@@ -239,6 +239,7 @@ function Navbar() {
             <Link href="/checkout">
               <button
                 disabled={disabled}
+                onClick={toggleCart}
                 className="disabled:bg-purple-600 flex items-center gap-2 text-white bg-[#6A0DAD] border-0 py-1.5 px-5 text-base focus:outline-none hover:bg-[#7e22ce] rounded-lg shadow-sm transition duration-300"
               >
                 <IoBagCheck />
