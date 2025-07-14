@@ -36,41 +36,24 @@ export default function ProductClient({ slug }: { slug: string }) {
 
   const cheackPincode = async () => {
     //function to cheac service avalablity in a particular pincode/aea
-    if (pin.trim() === "") {
+    const code = pin.trim();
+    if (code.length < 6) {
       setPinerror("please enter a valid pincode");
       setService(null);
       return;
     }
-    setPinerror("");
-    const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pinCode`);
-    const pinJson = await pins.json();
-
-    if (pinJson.pinCodes.includes(Number(pin))) {
-      setService(true);
-      toast.success("Delivery is available at your pincode", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Zoom,
-      });
-    } else {
-      setService(false);
-      toast.error("Sorry! Delivery is not available at your pincode", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Zoom,
-      });
+    try {
+      const res = await fetch( `${process.env.NEXT_PUBLIC_HOST}/api/pinCodes/getPinCodes?code=${code}`);
+      const data = await res.json();
+      if (data.success && data.pincode && data.pincode.isActive) {
+        setService(true);
+        setPinerror("");
+      } else {
+        setService(false);
+        setPinerror("");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
   const onchangePin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +153,8 @@ export default function ProductClient({ slug }: { slug: string }) {
                 BRAND NAME
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                {product?.title}, {selectColor && `-${selectColor.toUpperCase()}`}
+                {product?.title},{" "}
+                {selectColor && `-${selectColor.toUpperCase()}`}
                 {selectSize && ` /${selectSize.toUpperCase()}`}
               </h1>
               <div className="flex mb-4">
@@ -281,7 +265,11 @@ export default function ProductClient({ slug }: { slug: string }) {
                       value={color.toLowerCase()}
                       onClick={() => setSelectColor(color.toLowerCase())}
                       className={`border-2 border-gray-300 ml-1 rounded-full w-6 h-6 focus:outline-none
-                        ${selectColor === color.toLowerCase() ? "ring-2 ring-purple-500" : ""}
+                        ${
+                          selectColor === color.toLowerCase()
+                            ? "ring-2 ring-purple-500"
+                            : ""
+                        }
                         `}
                       style={{ backgroundColor: color.toLowerCase() }}
                       title={color}

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/Components/AlertModal";
 
 function Checkout() {
-  const { cart, subtotal, addToCart, removeFromCart} = useCart();
+  const { cart, subtotal, addToCart, removeFromCart } = useCart();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,12 +19,10 @@ function Checkout() {
   const [orderId, setOrderId] = useState("");
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
 
   const router = useRouter();
-
-  //TODO----->>>>>
-  // const [city, setCity] = useState("")
-  // const [state, setState] = useState("")
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,6 +39,48 @@ function Checkout() {
       setPincode(e.target.value);
     }
   };
+
+  // fetch ciity and state from backend from user given pin
+  const fetchCityState = async (pin: string) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/pinCodes/getPinCodes?code=${pin}`
+    );
+    const { pincode } = await res.json();
+    if (pincode) {
+      return { city: pincode.city, state: pincode.state, found: true };
+    }
+    return { city: "", state: "", found: false };
+  };
+  useEffect(() => {
+    const fetchCityStateForPin = async () => {
+      if (pincode.trim().length === 6) {
+        try {
+          const { city, state, found } = await fetchCityState(pincode.trim());
+          if (found) {
+            setCity(city);
+            setState(state);
+          } else {
+            setShowAlert(true);
+            setSuccess(false);
+            setMessage("Sorry! currently we dont delever in your area ");
+            setDisabled(true);
+            setCity("");
+            setState("");
+          }
+        } catch (err) {
+          console.error("Error fetching city/state:", err);
+          setCity("");
+          setState("");
+        }
+      } else {
+        setCity("");
+        setState("");
+      }
+    };
+    fetchCityStateForPin();
+  }, [pincode]);
+
+
   useEffect(() => {
     if (
       name.trim() !== "" &&
@@ -55,6 +95,10 @@ function Checkout() {
       setDisabled(true);
     }
   }, [name, email, address, phone, pincode, cart]);
+
+  //main checkout function 
+  // TODO----->>> add a payment gateway
+
   const pay = async () => {
     const formattedProducts = Object.keys(cart).map((key) => {
       const item = cart[key];
@@ -93,12 +137,12 @@ function Checkout() {
         setSuccess(true);
         setMessage("Your order has been placed successfully!");
       } else {
-        console.error("❌ Order failed response:", data);
+        console.error(" Order failed response:", data);
         setSuccess(false);
         setMessage(data.message || "Order failed");
       }
     } catch (error) {
-      console.error("🚨 Payment Error:", error);
+      console.error("Payment Error:", error);
       setSuccess(false);
       setMessage("Something went wrong while placing the order.");
     }
@@ -193,6 +237,7 @@ function Checkout() {
               </label>
               <input
                 readOnly={true}
+                value={city}
                 name="city"
                 type="text"
                 className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
@@ -205,6 +250,7 @@ function Checkout() {
               <input
                 readOnly={true}
                 name="state"
+                value={state}
                 type="text"
                 className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
