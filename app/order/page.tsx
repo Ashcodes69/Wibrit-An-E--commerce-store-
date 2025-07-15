@@ -32,7 +32,7 @@ const [order, setOrder] = useState<OrderType | null>(null);
   useEffect(() => {
     const fetchOrder = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/getOrder?orderId=${orderId}`
+        `${process.env.NEXT_PUBLIC_HOST}/api/orders/getOrder?orderId=${orderId}`
       );
       const data = await res.json();
       if (data.success) {

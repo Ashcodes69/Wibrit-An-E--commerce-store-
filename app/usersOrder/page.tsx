@@ -42,10 +42,10 @@ function UsersOrder() {
     const getMyOrders = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/fetchMyOrders?token=${token}`
+          `${process.env.NEXT_PUBLIC_HOST}/api/orders/fetchMyOrders?token=${token}`
         );
         const data = await res.json();
-        if (data.success) setOrders(data.myOrders); // ✅ fixed here
+        if (data.success) setOrders(data.myOrders); 
       } catch (err) {
         console.error(err);
       } finally {

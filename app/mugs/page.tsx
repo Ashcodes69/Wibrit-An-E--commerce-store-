@@ -28,7 +28,7 @@ function Mugs() {
       try {
         const category = "Mugs";
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/getproducts?category=${category}`
+          `${process.env.NEXT_PUBLIC_HOST}/api/products/getproducts?category=${category}`
         );
         const data = await res.json();
         setProducts(data);

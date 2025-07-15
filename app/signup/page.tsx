@@ -39,7 +39,7 @@ function Signup() {
     const data = { Name, email, password };
     try {
       const responce = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/signUp`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/authentication/signUp`,
         {
           method: "POST",
           headers: {

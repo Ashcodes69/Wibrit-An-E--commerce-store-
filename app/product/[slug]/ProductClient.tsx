@@ -65,7 +65,7 @@ export default function ProductClient({ slug }: { slug: string }) {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/getproducts?slug=${slug}`
+          `${process.env.NEXT_PUBLIC_HOST}/api/products/getproducts?slug=${slug}`
         );
         const data = await res.json();
         setProduct(data);

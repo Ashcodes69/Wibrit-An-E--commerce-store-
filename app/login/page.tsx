@@ -31,7 +31,7 @@ function Login() {
     const data = { email, password };
     try {
       const responce = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/logIn`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/authentication/logIn`,
         {
           method: "POST",
           headers: {
