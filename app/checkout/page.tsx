@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/Components/AlertModal";
 
 function Checkout() {
-  const { cart, subtotal, addToCart, removeFromCart } = useCart();
+  const { cart, subtotal, addToCart, removeFromCart,clearCart } = useCart();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -80,7 +80,6 @@ function Checkout() {
     fetchCityStateForPin();
   }, [pincode]);
 
-
   useEffect(() => {
     if (
       name.trim() !== "" &&
@@ -96,7 +95,7 @@ function Checkout() {
     }
   }, [name, email, address, phone, pincode, cart]);
 
-  //main checkout function 
+  //main checkout function
   // TODO----->>> add a payment gateway
 
   const pay = async () => {
@@ -136,13 +135,32 @@ function Checkout() {
         setOrderId(data.orderId);
         setSuccess(true);
         setMessage("Your order has been placed successfully!");
+        clearCart()
       } else {
         console.error(" Order failed response:", data);
+        setShowAlert(true);
         setSuccess(false);
-        setMessage(data.message || "Order failed");
+        if (Array.isArray(data.outOfStockItems)) {
+          const formattedMessage = data.outOfStockItems
+            .map(
+              (item: {
+                title: string;
+                color: string;
+                size: string;
+                requested: number;
+                avalable: number;
+              }) =>
+                `Products are out Of Stock\n${item.title} (${item.color}/${item.size}) - Requested: ${item.requested}, Available: ${item.avalable}\m`
+            )
+            .join("\n");
+          setMessage(formattedMessage);
+        } else {
+          setMessage(data.massage || "order failed");
+        }
       }
     } catch (error) {
       console.error("Payment Error:", error);
+      setShowAlert(true);
       setSuccess(false);
       setMessage("Something went wrong while placing the order.");
     }

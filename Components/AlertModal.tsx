@@ -38,7 +38,7 @@ function AlertModal({
                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-green-300 animate-bounce mb-3">
                   <FaCheck className="text-green-700 text-3xl" />
                 </div>
-                <p className="text-lg font-semibold text-green-900 mb-4">
+                <p className="text-lg font-semibold text-green-900 mb-4 whitespace-pre-line">
                   {message}
                 </p>
               </div>
@@ -47,7 +47,7 @@ function AlertModal({
                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-red-300 animate-bounce mb-3">
                   <IoCloseSharp className="text-red-700 text-3xl" />
                 </div>
-                <p className="text-lg font-semibold text-red-900 mb-4">
+                <p className="text-lg font-semibold text-red-900 mb-4 whitespace-pre-line">
                   {message}
                 </p>
               </div>

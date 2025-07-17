@@ -354,7 +354,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                       product?._id
                     );
                   }}
-                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
+                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-4 focus:outline-none hover:bg-purple-600 rounded"
                 >
                   Buy Now
                 </button>
@@ -404,7 +404,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                       transition: Zoom,
                     });
                   }}
-                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-purple-600 rounded"
+                  className="flex items-center ml-auto text-white bg-purple-500 border-0 py-2 px-2 md:px-4 focus:outline-none hover:bg-purple-600 rounded"
                 >
                   <IoMdAddCircleOutline className="mx-2 font-bold text-xl" />
                   To Cart

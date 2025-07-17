@@ -62,50 +62,33 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+      const outOfStockItems = [];
+      for (const item of products) {
+        const dbProduct = await Product.findById(item.productId);
+        const variant = dbProduct?.variants.find(
+          (v) =>
+            v.color.match(new RegExp(`^${item.color}$`, "i")) &&
+            v.size.match(new RegExp(`^${item.size}$`, "i"))
+        );
 
-      // if (variant.quantity < item.quantity) {
-      //   console.error(
-      //     " Not enough stock for variant:",
-      //     variant,
-      //     "Requested:",
-      //     item.quantity
-      //   );
-      //   return NextResponse.json(
-      //     { success: false, message: "Product out of stock" },
-      //     { status: 400 }
-      //   );
-      // }
-      // const update = await Product.updateOne(
-      //   {
-      //     _id: item.productId,
-      //     "variants.color": item.color.toLowerCase(),
-      //     "variants.size": item.size.toLowerCase(),
-      //     // make sure there is enough stock before we decrement
-      //     "variants.quantity": { $gte: item.quantity },
-      //   },
-      //   {
-      //     // Mongo will subtract the requested qty
-      //     $inc: { "variants.$.quantity": -item.quantity },
-      //   }
-      // );
-      const update = await Product.updateOne(
-        {
-          _id: item.productId,
-          variants: {
-            $elemMatch: {
-              color: new RegExp(`^${item.color}$`, "i"),
-              size: new RegExp(`^${item.size}$`, "i"),
-              quantity: { $gte: item.quantity },
-            },
-          },
-        },
-        {
-          $inc: { "variants.$.quantity": -item.quantity },
+        if (!variant || variant.quantity < item.quantity) {
+          outOfStockItems.push({
+            title: dbProduct?.title,
+            color: item.color,
+            size: item.size,
+            avalable: variant?.quantity ?? 0,
+            requested: item.quantity,
+          });
         }
-      );
-      if (update.modifiedCount === 0) {
+      }
+      console.log(outOfStockItems)
+      if (outOfStockItems.length > 0) {
         return NextResponse.json(
-          { success: false, message: "product out of stock" },
+          {
+            success: false,
+            message: "some items are out of stock hehe",
+            outOfStockItems,
+          },
           { status: 400 }
         );
       }
