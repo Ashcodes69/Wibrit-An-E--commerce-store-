@@ -36,6 +36,7 @@ function Myaccount() {
   const [message, setMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [readOnly, setReadOnly] = useState(false);
 
   // fetch city and state from users pincode
   const fetchCityState = async (pin: string) => {
@@ -88,13 +89,89 @@ function Myaccount() {
       setPincode(e.target.value);
     }
   };
+  useEffect(() => {
+    if (
+      name.trim() &&
+      email.trim() &&
+      address.trim() &&
+      phone.trim().length === 10 &&
+      pincode.trim().length === 6 &&
+      city.trim() &&
+      state.trim()
+    ) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [name, email, address, phone, pincode, city, state]);
+
+  const saveUserProfile = async () => {
+    const data = { name, email, address, phone, pincode, city, state };
+    try {
+      const responce = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/userProfile/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      const result = await responce.json();
+      if (responce.ok && result.success) {
+        setSuccess(true);
+        setMessage("Profile saved successfully!");
+        setReadOnly(true);
+      } else {
+        setSuccess(false);
+        setReadOnly(false);
+        setMessage(result.error || "Failed to save profile.");
+      }
+    } catch (err) {
+      console.error(err);
+      setSuccess(false);
+      setMessage("Something went wrong.");
+    }
+    setShowAlert(true);
+  };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!email) {
+        return;
+      }
+      try{
+      const responce = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/userProfile/get?email=${email}`
+      );
+      const data = await responce.json();
+      console.log(data);
+      if (responce.ok && data.success) {
+        const user = data.user;
+        setAddress(user.address);
+        setPhone(user.phone.toString());
+        setPincode(user.pincode.toString());
+        setCity(user.city);
+        setState(user.state);
+        setReadOnly(true);
+      }
+    }catch(err){
+      console.error(err)
+    }
+      }
+fetchUserProfile();
+  }, [email]);
+
   return (
     <>
       <AlertModal
         showAlert={showAlert}
         message={message}
         success={success}
-        onClose={() => {}}
+        onClose={() => {
+          setShowAlert(false);
+        }}
       />
       <div className="max-w-5xl mx-auto p-4 bg-purple-50">
         <h2 className="text-3xl font-bold text-purple-800 mb-8 border-b pb-2">
@@ -143,6 +220,7 @@ function Myaccount() {
               Address
             </label>
             <textarea
+              readOnly={readOnly}
               onChange={handleChange}
               value={address}
               name="address"
@@ -156,6 +234,7 @@ function Myaccount() {
                 Phone
               </label>
               <input
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={phone}
                 name="phone"
@@ -168,6 +247,7 @@ function Myaccount() {
                 PinCode
               </label>
               <input
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={pincode}
                 name="pincode"
@@ -205,6 +285,7 @@ function Myaccount() {
         {/* Save Button */}
         <div className="text-right">
           <button
+            onClick={saveUserProfile}
             className="bg-purple-700 text-white px-6 py-3 rounded-lg hover:bg-purple-800 transition-all shadow-md"
             disabled={disabled}
           >
