@@ -2,12 +2,27 @@
 import AlertModal from "@/Components/AlertModal";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 function Myaccount() {
   const router = useRouter();
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+    //if user is not logged in then send him to home page
+    if (!token) {
       router.push("/");
+      return;
+    }
+    try {
+      //fetch name and email of an logged in user
+      const decoded = jwt.decode(token) as JwtPayload | null;
+      if (decoded && typeof decoded === "object" && "email" in decoded) {
+        setEmail(decoded.email as string);
+        setName((decoded.name as string) || "");
+        console.log(decoded.name as string);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, [router]);
   const [name, setName] = useState("");
@@ -22,6 +37,7 @@ function Myaccount() {
   const [showAlert, setShowAlert] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
+  // fetch city and state from users pincode
   const fetchCityState = async (pin: string) => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/pinCodes/getPinCodes?code=${pin}`
@@ -64,11 +80,7 @@ function Myaccount() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.target.name === "name") {
-      setName(e.target.value);
-    } else if (e.target.name === "email") {
-      setEmail(e.target.value);
-    } else if (e.target.name === "address") {
+    if (e.target.name === "address") {
       setAddress(e.target.value);
     } else if (e.target.name === "phone") {
       setPhone(e.target.value);
@@ -82,14 +94,6 @@ function Myaccount() {
         showAlert={showAlert}
         message={message}
         success={success}
-        // onClose={() => {
-        //   setShowAlert(false);
-        //   if (success === true) {
-        //     router.push(
-        //       `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
-        //     );
-        //   }
-        // }}
         onClose={() => {}}
       />
       <div className="max-w-5xl mx-auto p-4 bg-purple-50">
@@ -97,7 +101,6 @@ function Myaccount() {
           My Account
         </h2>
 
-        {/* Personal Info */}
         <div className="bg-white shadow-md rounded-2xl p-6 mb-8">
           <h3 className="text-xl font-semibold text-purple-700 mb-4">
             Personal Information
@@ -108,7 +111,7 @@ function Myaccount() {
                 Name
               </label>
               <input
-                onChange={handleChange}
+                readOnly
                 value={name}
                 name="name"
                 type="text"
@@ -120,7 +123,7 @@ function Myaccount() {
                 Email
               </label>
               <input
-                onChange={handleChange}
+                readOnly
                 value={email}
                 name="email"
                 type="email"

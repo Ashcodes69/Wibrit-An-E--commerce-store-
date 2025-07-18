@@ -11,6 +11,7 @@ function Login() {
   const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [resCode, setResCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -46,9 +47,11 @@ function Login() {
         window.dispatchEvent(new Event("storage"));
         setEmail("");
         setPassword("");
+        setResCode(result.code || null);
         setMessage(`Welcome back to WibRit, ${result.Name}!`);
         setSuccess(true);
       } else {
+        setResCode(result.code || null);
         setMessage(result.error);
         setSuccess(false);
       }
@@ -71,6 +74,8 @@ function Login() {
           setShowAlert(false);
           if (success === true) {
             router.push(`${process.env.NEXT_PUBLIC_HOST}/`);
+          }else if (resCode === "noUser") {
+            router.push(`${process.env.NEXT_PUBLIC_HOST}/signup`);
           }
         }}
       />

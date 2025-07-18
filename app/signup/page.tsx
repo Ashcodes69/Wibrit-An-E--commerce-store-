@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-// import { FaCheck } from "react-icons/fa6";
-// import { IoCloseSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import AlertModal from "@/Components/AlertModal";
 
@@ -13,6 +11,7 @@ function Signup() {
   const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [resCode, setResCode] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -57,10 +56,12 @@ function Signup() {
         setName("");
         setEmail("");
         setPassword("");
+        setResCode(result.code || null);
         setMessage(result.message + "\nWelcome to Wibrit\n" + data.Name);
         setSuccess(true);
       } else {
         setSuccess(false);
+        setResCode(result.code || null);
         setMessage(result.message);
       }
       setShowAlert(true);
@@ -82,6 +83,8 @@ function Signup() {
           setShowAlert(false);
           if (success === true) {
             router.push(`${process.env.NEXT_PUBLIC_HOST}/`);
+          } else if (resCode === "existingUser") {
+            router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
           }
         }}
       />

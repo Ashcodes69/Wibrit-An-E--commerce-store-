@@ -18,10 +18,9 @@ export async function POST(req: Request) {
         process.env.AES_SECREAT!
       );
       const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-
       if (password === decryptedPassword) {
         const token = jwt.sign(
-          { id: user._id, email: user.email, name: user.name },
+          { id: user._id, email: user.email, name: user.Name },
           process.env.JWT_SECRET!,
           { expiresIn: "7d" }
         );
@@ -33,7 +32,6 @@ export async function POST(req: Request) {
           },
           { status: 200 }
         );
-       
       } else {
         return NextResponse.json(
           { success: false, error: "Invalid credentials" },
@@ -42,7 +40,7 @@ export async function POST(req: Request) {
       }
     } else {
       return NextResponse.json(
-        { success: false, error: "User not found" },
+        { success: false,code:"noUser", error: "User not found" },
         { status: 404 }
       );
     }
