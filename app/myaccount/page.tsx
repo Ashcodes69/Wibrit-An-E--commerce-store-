@@ -6,6 +6,23 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 function Myaccount() {
   const router = useRouter();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmation, setConfirmation] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [readOnly, setReadOnly] = useState(false);
+  const [originalData, setOriginalData] = useState({});
+  const [isEditable, setIsEditable] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     //if user is not logged in then send him to home page
@@ -25,18 +42,6 @@ function Myaccount() {
       console.log(err);
     }
   }, [router]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [message, setMessage] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-  const [readOnly, setReadOnly] = useState(false);
 
   // fetch city and state from users pincode
   const fetchCityState = async (pin: string) => {
@@ -81,29 +86,43 @@ function Myaccount() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.target.name === "address") {
-      setAddress(e.target.value);
-    } else if (e.target.name === "phone") {
-      setPhone(e.target.value);
-    } else if (e.target.name === "pincode") {
-      setPincode(e.target.value);
+    const { name, value } = e.target;
+
+    if (name === "address") {
+      setAddress(value);
+    } else if (name === "phone") {
+      setPhone(value);
+    } else if (name === "pincode") {
+      setPincode(value);
     }
+
+    const updatedData = {
+      name,
+      email,
+      address: name === "address" ? value : address,
+      phone: name === "phone" ? value : phone,
+      pincode: name === "pincode" ? value : pincode,
+      city,
+      state,
+    };
+    const hasChanged = Object.keys(updatedData).some(
+      (key) =>
+        updatedData[key as keyof typeof updatedData] !==
+        originalData[key as keyof typeof originalData]
+    );
+    setDisabled(!hasChanged);
   };
   useEffect(() => {
     if (
-      name.trim() &&
-      email.trim() &&
-      address.trim() &&
-      phone.trim().length === 10 &&
-      pincode.trim().length === 6 &&
-      city.trim() &&
-      state.trim()
+      address.trim() !== "" &&
+      phone.trim().length >= 10 &&
+      pincode.trim().length >= 6
     ) {
       setDisabled(false);
     } else {
       setDisabled(true);
     }
-  }, [name, email, address, phone, pincode, city, state]);
+  }, [address, phone, pincode]);
 
   const saveUserProfile = async () => {
     const data = { name, email, address, phone, pincode, city, state };
@@ -123,6 +142,17 @@ function Myaccount() {
         setSuccess(true);
         setMessage("Profile saved successfully!");
         setReadOnly(true);
+        setOriginalData({
+          name,
+          email,
+          address,
+          phone,
+          pincode,
+          city,
+          state,
+        });
+        setDisabled(true);
+        setIsEditable(false);
       } else {
         setSuccess(false);
         setReadOnly(false);
@@ -141,26 +171,30 @@ function Myaccount() {
       if (!email) {
         return;
       }
-      try{
-      const responce = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/userProfile/get?email=${email}`
-      );
-      const data = await responce.json();
-      console.log(data);
-      if (responce.ok && data.success) {
-        const user = data.user;
-        setAddress(user.address);
-        setPhone(user.phone.toString());
-        setPincode(user.pincode.toString());
-        setCity(user.city);
-        setState(user.state);
-        setReadOnly(true);
+      try {
+        const responce = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/api/userProfile/get?email=${email}`
+        );
+        const data = await responce.json();
+        if (responce.ok && data.success) {
+          const user = data.user;
+          setAddress(user.address);
+          setPhone(user.phone.toString());
+          setPincode(user.pincode.toString());
+          setCity(user.city);
+          setState(user.state);
+          setReadOnly(true);
+          setOriginalData({
+            address: user.address,
+            phone: user.phone.toString(),
+            pincode: user.pincode.toString(),
+          });
+        }
+      } catch (err) {
+        console.error(err);
       }
-    }catch(err){
-      console.error(err)
-    }
-      }
-fetchUserProfile();
+    };
+    fetchUserProfile();
   }, [email]);
 
   return (
@@ -169,8 +203,15 @@ fetchUserProfile();
         showAlert={showAlert}
         message={message}
         success={success}
+        confirmation={confirmation}
         onClose={() => {
           setShowAlert(false);
+        }}
+        onConfirm={() => {
+          setReadOnly(false);
+          setIsEditable(true);
+          setShowAlert(false);
+          setConfirmation(false);
         }}
       />
       <div className="max-w-5xl mx-auto p-4 bg-purple-50">
@@ -192,7 +233,7 @@ fetchUserProfile();
                 value={name}
                 name="name"
                 type="text"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full border bg-gray-100 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
             <div className="w-full md:w-[48%]">
@@ -204,7 +245,7 @@ fetchUserProfile();
                 value={email}
                 name="email"
                 type="email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full border bg-gray-100 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
           </div>
@@ -224,7 +265,11 @@ fetchUserProfile();
               onChange={handleChange}
               value={address}
               name="address"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+              className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                isEditable
+                  ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                  : "bg-gray-100"
+              }`}
             ></textarea>
           </div>
 
@@ -239,7 +284,11 @@ fetchUserProfile();
                 value={phone}
                 name="phone"
                 type="number"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               />
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -252,7 +301,11 @@ fetchUserProfile();
                 value={pincode}
                 name="pincode"
                 type="number"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               />
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -279,14 +332,33 @@ fetchUserProfile();
                 className="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
+            {isEditable && (
+              <div className="bg-purple-100 text-purple-800 px-4 py-4 rounded mb-0 font-bold text-center">
+                ✏️ Edit mode active — make your changes and press Save.
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Save Button */}
-        <div className="text-right">
+        <div className=" flex justify-end gap-3 mt-4">
+          <button
+            onClick={() => {
+              setShowAlert(true);
+              setMessage("Do you want to Edit your profile ?");
+              setConfirmation(true);
+            }}
+            disabled={isEditable}
+            className={`px-6 py-3 rounded-lg shadow-md transition-all ${
+              isEditable
+                ? "bg-red-500 cursor-not-allowed"
+                : "bg-red-700 hover:bg-red-800 text-white cursor-pointer"
+            }`}
+          >
+            Edit
+          </button>
           <button
             onClick={saveUserProfile}
-            className="bg-purple-700 text-white px-6 py-3 rounded-lg hover:bg-purple-800 transition-all shadow-md"
+            className=" disabled:bg-purple-500 disabled:cursor-not-allowed cursor-pointer bg-purple-700 text-white px-6 py-3 rounded-lg hover:bg-purple-800 transition-all shadow-md"
             disabled={disabled}
           >
             Save Changes

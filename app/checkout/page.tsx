@@ -5,9 +5,12 @@ import Image from "next/image";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { useRouter } from "next/navigation";
 import AlertModal from "@/Components/AlertModal";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { FaEdit } from "react-icons/fa";
+import { RiResetLeftLine } from "react-icons/ri";
 
 function Checkout() {
-  const { cart, subtotal, addToCart, removeFromCart,clearCart } = useCart();
+  const { cart, subtotal, addToCart, removeFromCart, clearCart } = useCart();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,9 +21,21 @@ function Checkout() {
   const [showAlert, setShowAlert] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [success, setSuccess] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
   const [message, setMessage] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [readOnly, setReadOnly] = useState(true);
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    pincode: "",
+    city: "",
+    state: "",
+  });
+  const [isEditable, setIsEditable] = useState(false);
+  const [reset, setReset] = useState(false);
 
   const router = useRouter();
 
@@ -39,6 +54,25 @@ function Checkout() {
       setPincode(e.target.value);
     }
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    //if user is not logged in then send him to home page
+    if (!token) {
+      router.push("/");
+      return;
+    }
+    try {
+      //fetch name and email of an logged in user
+      const decoded = jwt.decode(token) as JwtPayload | null;
+      if (decoded && typeof decoded === "object" && "email" in decoded) {
+        setEmail(decoded.email as string);
+        setName((decoded.name as string) || "");
+        console.log(decoded.name as string);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, [router]);
 
   // fetch ciity and state from backend from user given pin
   const fetchCityState = async (pin: string) => {
@@ -95,6 +129,50 @@ function Checkout() {
     }
   }, [name, email, address, phone, pincode, cart]);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!email) {
+        return;
+      }
+      try {
+        const responce = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/api/userProfile/get?email=${email}`
+        );
+        const data = await responce.json();
+        if (responce.ok && data.success) {
+          const user = data.user;
+          setAddress(user.address);
+          setPhone(user.phone.toString());
+          setPincode(user.pincode.toString());
+          setCity(user.city);
+          setState(user.state);
+          // setReadOnly(true);
+          setOriginalData({
+            name: user.name || "",
+            address: user.address,
+            phone: user.phone.toString(),
+            pincode: user.pincode.toString(),
+            city: user.city,
+            state: user.state,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUserProfile();
+  }, [email]);
+
+  const resetForm = () => {
+    setName(originalData.name);
+    setAddress(originalData.address);
+    setPhone(originalData.phone);
+    setPincode(originalData.pincode);
+    setCity(originalData.city);
+    setState(originalData.state);
+    setIsEditable(false);
+  };
+
   //main checkout function
   // TODO----->>> add a payment gateway
 
@@ -135,7 +213,7 @@ function Checkout() {
         setOrderId(data.orderId);
         setSuccess(true);
         setMessage("Your order has been placed successfully!");
-        clearCart()
+        clearCart();
       } else {
         console.error(" Order failed response:", data);
         setShowAlert(true);
@@ -171,12 +249,25 @@ function Checkout() {
         showAlert={showAlert}
         message={message}
         success={success}
+        confirmation={confirmation}
         onClose={() => {
           setShowAlert(false);
           if (success === true) {
             router.push(
               `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
             );
+          }
+        }}
+        onConfirm={() => {
+          if (!reset) {
+            setReadOnly(false);
+            setIsEditable(true);
+            setShowAlert(false);
+            setConfirmation(false);
+          } else if (reset) {
+            resetForm();
+            setShowAlert(false);
+            setConfirmation(false);
           }
         }}
       />
@@ -189,17 +280,55 @@ function Checkout() {
           <h2 className="text-2xl font-semibold text-purple-800 mb-6">
             1. Delivery Details
           </h2>
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={() => {
+                setShowAlert(true);
+                setMessage("Do you want to Edit Delivery Details?");
+                setConfirmation(true);
+              }}
+              disabled={isEditable}
+              className={`px-6 py-3 rounded-lg shadow-md transition-all ${
+                isEditable
+                  ? "invisible"
+                  : "hover:bg-red-400 text-red cursor-pointer"
+              }`}
+            >
+              <FaEdit />
+            </button>
+
+            {/* ✅ Reset Button */}
+            {isEditable && (
+              <button
+                onClick={() => {
+                  setShowAlert(true);
+                  setMessage("Do you want to reset");
+                  setConfirmation(true);
+                  setReset(true);
+                }}
+                className="text-xl px-6 py-2 rounded-lg text-purple font-bold hover:bg-purple-500 transition"
+              >
+                <RiResetLeftLine />
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-wrap gap-5">
             <div className="w-full md:w-[48%]">
               <label className="text-sm font-medium text-gray-900 mb-1 block">
                 Name
               </label>
               <input
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={name}
                 name="name"
                 type="text"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               />
             </div>
             <div className="w-full md:w-[48%]">
@@ -207,11 +336,12 @@ function Checkout() {
                 Email
               </label>
               <input
+                readOnly
                 onChange={handleChange}
                 value={email}
                 name="email"
                 type="email"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="bg-gray-100 w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
             <div className="w-full">
@@ -219,10 +349,15 @@ function Checkout() {
                 Address
               </label>
               <textarea
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={address}
                 name="address"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               ></textarea>
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -230,11 +365,16 @@ function Checkout() {
                 Phone
               </label>
               <input
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={phone}
                 name="phone"
                 type="number"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               />
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -242,11 +382,16 @@ function Checkout() {
                 PinCode
               </label>
               <input
+                readOnly={readOnly}
                 onChange={handleChange}
                 value={pincode}
                 name="pincode"
                 type="number"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none ${
+                  isEditable
+                    ? "bg-purple-100 shadow-purple-300 shadow-md transition-transform hover:scale-105"
+                    : "bg-gray-100"
+                }`}
               />
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -258,7 +403,7 @@ function Checkout() {
                 value={city}
                 name="city"
                 type="text"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="bg-gray-100 w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
             <div className="w-full md:w-1/2 lg:w-1/4">
@@ -270,7 +415,7 @@ function Checkout() {
                 name="state"
                 value={state}
                 type="text"
-                className="w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="bg-gray-100 w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
           </div>
