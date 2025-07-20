@@ -20,14 +20,14 @@ type Order = {
   products: OrderProduct[];
 };
 
-type JwtPayload = { email: string; exp: number; iat: number; id: string };
+type JwtPayload = {name:string; email: string; exp: number; iat: number; id: string };
 
 function UsersOrder() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string>("");
-
+  const [name, setName] = useState("")
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return router.push("/");
@@ -35,6 +35,7 @@ function UsersOrder() {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
       setEmail(decoded.email);
+      setName(decoded.name)
     } catch (err) {
       console.error("Invalid token:", err);
     }
@@ -60,7 +61,8 @@ function UsersOrder() {
     <div className="bg-purple-100 min-h-screen pt-10">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-purple-700">My Orders</h1>
-        <p className="text-gray-600">Email: {email || "Fetching..."}</p>
+         <p className="text-gray-900"> {name || "Fetching..."}</p>
+        <p className="text-gray-900"> {email || "Fetching..."}</p>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 space-y-6 mb-12 cursor-pointer">

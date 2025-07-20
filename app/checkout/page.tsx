@@ -58,7 +58,9 @@ function Checkout() {
     const token = localStorage.getItem("token");
     //if user is not logged in then send him to home page
     if (!token) {
-      router.push("/");
+      setShowAlert(true);
+      setSuccess(false);
+      setMessage("Please Log In to proceed with checkout");
       return;
     }
     try {
@@ -155,6 +157,9 @@ function Checkout() {
             city: user.city,
             state: user.state,
           });
+        }else {
+          setIsEditable(true)
+          setReadOnly(false)
         }
       } catch (err) {
         console.error(err);
@@ -256,6 +261,8 @@ function Checkout() {
             router.push(
               `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
             );
+          } else if (success === false) {
+            router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
           }
         }}
         onConfirm={() => {
@@ -280,39 +287,6 @@ function Checkout() {
           <h2 className="text-2xl font-semibold text-purple-800 mb-6">
             1. Delivery Details
           </h2>
-          <div className="flex gap-4 mb-4">
-            <button
-              onClick={() => {
-                setShowAlert(true);
-                setMessage("Do you want to Edit Delivery Details?");
-                setConfirmation(true);
-              }}
-              disabled={isEditable}
-              className={`px-6 py-3 rounded-lg shadow-md transition-all ${
-                isEditable
-                  ? "invisible"
-                  : "hover:bg-red-400 text-red cursor-pointer"
-              }`}
-            >
-              <FaEdit />
-            </button>
-
-            {/* ✅ Reset Button */}
-            {isEditable && (
-              <button
-                onClick={() => {
-                  setShowAlert(true);
-                  setMessage("Do you want to reset");
-                  setConfirmation(true);
-                  setReset(true);
-                }}
-                className="text-xl px-6 py-2 rounded-lg text-purple font-bold hover:bg-purple-500 transition"
-              >
-                <RiResetLeftLine />
-              </button>
-            )}
-          </div>
-
           <div className="flex flex-wrap gap-5">
             <div className="w-full md:w-[48%]">
               <label className="text-sm font-medium text-gray-900 mb-1 block">
@@ -417,6 +391,36 @@ function Checkout() {
                 type="text"
                 className="bg-gray-100 w-full border border-purple-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
               />
+            </div>
+            <div className="flex gap-4 mb-4">
+              <button
+                onClick={() => {
+                  setShowAlert(true);
+                  setMessage("Do you want to Edit Delivery Details?");
+                  setConfirmation(true);
+                }}
+                disabled={isEditable}
+                className={`px-6 py-3 rounded-lg shadow-md transition-all ${
+                  isEditable
+                    ? "invisible"
+                    : "bg-gray-100 hover:bg-red-400 text-red cursor-pointer"
+                }`}
+              >
+                <FaEdit />
+              </button>
+              {isEditable && (
+                <button
+                  onClick={() => {
+                    setShowAlert(true);
+                    setMessage("Do you want to reset");
+                    setConfirmation(true);
+                    setReset(true);
+                  }}
+                  className="bg-gray-100 text-xl px-6 py-2 rounded-lg text-purple font-bold hover:bg-purple-500 transition"
+                >
+                  <RiResetLeftLine />
+                </button>
+              )}
             </div>
           </div>
         </div>
