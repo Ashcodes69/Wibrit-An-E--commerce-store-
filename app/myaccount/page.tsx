@@ -4,6 +4,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+interface UserProfileData {
+  address: string;
+  phone: string;
+  pincode: string;
+}
 function Myaccount() {
   const router = useRouter();
 
@@ -20,8 +25,13 @@ function Myaccount() {
   const [showAlert, setShowAlert] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [readOnly, setReadOnly] = useState(false);
-  const [originalData, setOriginalData] = useState({});
+  const [originalData, setOriginalData] = useState<UserProfileData>({
+    address: "",
+    phone: "",
+    pincode: "",
+  });
   const [isEditable, setIsEditable] = useState(false);
+  const [reset, setReset] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -143,13 +153,13 @@ function Myaccount() {
         setMessage("Profile saved successfully!");
         setReadOnly(true);
         setOriginalData({
-          name,
-          email,
+          // name,
+          // email,
           address,
           phone,
           pincode,
-          city,
-          state,
+          // city,
+          // state,
         });
         setDisabled(true);
         setIsEditable(false);
@@ -196,7 +206,14 @@ function Myaccount() {
     };
     fetchUserProfile();
   }, [email]);
-
+  const resetForm = () => {
+    setAddress(originalData.address);
+    setPhone(originalData.phone);
+    setPincode(originalData.pincode);
+    setIsEditable(false);
+    setReadOnly(true);
+    setShowAlert(false);
+  };
   return (
     <>
       <AlertModal
@@ -208,10 +225,14 @@ function Myaccount() {
           setShowAlert(false);
         }}
         onConfirm={() => {
-          setReadOnly(false);
-          setIsEditable(true);
-          setShowAlert(false);
-          setConfirmation(false);
+          if (!reset) {
+            setReadOnly(false);
+            setIsEditable(true);
+            setShowAlert(false);
+            setConfirmation(false);
+          } else if (reset) {
+            resetForm();
+          }
         }}
       />
       <div className="max-w-5xl mx-auto p-4 bg-purple-50">
@@ -341,6 +362,20 @@ function Myaccount() {
         </div>
 
         <div className=" flex justify-end gap-3 mt-4">
+          {isEditable && (
+            <button
+              onClick={() => {
+                setShowAlert(true);
+                setMessage("Do you want to reset");
+                setConfirmation(true);
+                setReset(true);
+              }}
+              className=" disabled:bg-purple-500 disabled:cursor-not-allowed cursor-pointer bg-purple-700 text-white px-6 py-3 rounded-lg hover:bg-purple-800 transition-all shadow-md"
+              disabled={disabled}
+            >
+              Reset
+            </button>
+          )}
           <button
             onClick={() => {
               setShowAlert(true);

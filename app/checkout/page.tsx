@@ -42,25 +42,22 @@ function Checkout() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.target.name === "name") {
-      setName(e.target.value);
-    } else if (e.target.name === "email") {
-      setEmail(e.target.value);
-    } else if (e.target.name === "address") {
-      setAddress(e.target.value);
-    } else if (e.target.name === "phone") {
-      setPhone(e.target.value);
-    } else if (e.target.name === "pincode") {
-      setPincode(e.target.value);
+    const { name, value } = e.target;
+    if (name === "name") {
+      setName(value);
+    } else if (name === "address") {
+      setAddress(value);
+    } else if (name === "phone") {
+      setPhone(value);
+    } else if (name === "pincode") {
+      setPincode(value);
     }
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
     //if user is not logged in then send him to home page
     if (!token) {
-      setShowAlert(true);
-      setSuccess(false);
-      setMessage("Please Log In to proceed with checkout");
+      router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
       return;
     }
     try {
@@ -157,9 +154,9 @@ function Checkout() {
             city: user.city,
             state: user.state,
           });
-        }else {
-          setIsEditable(true)
-          setReadOnly(false)
+        } else {
+          setIsEditable(true);
+          setReadOnly(false);
         }
       } catch (err) {
         console.error(err);
@@ -176,6 +173,8 @@ function Checkout() {
     setCity(originalData.city);
     setState(originalData.state);
     setIsEditable(false);
+    setReadOnly(true);
+    setShowAlert(false);
   };
 
   //main checkout function
@@ -261,8 +260,6 @@ function Checkout() {
             router.push(
               `${process.env.NEXT_PUBLIC_HOST}/order?orderId=${orderId}`
             );
-          } else if (success === false) {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
           }
         }}
         onConfirm={() => {
@@ -273,8 +270,7 @@ function Checkout() {
             setConfirmation(false);
           } else if (reset) {
             resetForm();
-            setShowAlert(false);
-            setConfirmation(false);
+            // setConfirmation(false);
           }
         }}
       />
